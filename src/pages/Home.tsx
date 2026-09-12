@@ -1,11 +1,12 @@
 import Nav from '../components/Nav'
+import HeroSection from '../components/HeroSection'
 
 export default function Home() {
   return (
     <>
       <Nav />
       <main>
-        <p style={{ padding: '120px 32px', color: 'var(--gold)' }}>Pochive — building…</p>
+        <HeroSection />
       </main>
     </>
   )
