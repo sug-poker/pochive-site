@@ -28,7 +28,6 @@ jobs:
         with:
           node-version: 20
           cache: npm
-      - run: find _pochive -maxdepth 3 -type d
       - run: npm ci
       - run: |
           rm -rf node_modules/@pochive/plans
