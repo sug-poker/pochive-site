@@ -256,3 +256,49 @@ a {
     align-self: center;
   }
 }
+
+/* ── Features ── */
+
+.features {
+  background: var(--surface);
+}
+
+.features-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+}
+
+.feature-card {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.feature-card-body {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.feature-card h3 {
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.feature-card p {
+  font-size: 14px;
+  color: var(--muted);
+  line-height: 1.65;
+}
+
+@media (max-width: 768px) {
+  .features-grid {
+    grid-template-columns: 1fr;
+  }
+}
