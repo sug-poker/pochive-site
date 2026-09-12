@@ -6,8 +6,8 @@ export default function ContactSection() {
         <p className="contact-desc">
           ご不明な点やご意見は、以下のメールアドレスまでお気軽にご連絡ください。
         </p>
-        <a href="mailto:sug.apps@gmail.com" className="contact-email">
-          sug.apps@gmail.com
+        <a href="mailto:sug.development@gmail.com" className="contact-email">
+          sug.development@gmail.com
         </a>
       </div>
     </section>
