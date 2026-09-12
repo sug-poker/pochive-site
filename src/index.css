@@ -337,6 +337,31 @@ a {
   font-weight: 800;
 }
 
+.pricing-card-price {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.pricing-card-price-monthly {
+  font-size: 32px;
+  font-weight: 800;
+  color: var(--gold);
+  letter-spacing: -1px;
+}
+
+.pricing-card-price-monthly span {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--muted);
+  letter-spacing: 0;
+}
+
+.pricing-card-price-yearly {
+  font-size: 13px;
+  color: var(--muted);
+}
+
 .pricing-card ul {
   list-style: none;
   display: flex;

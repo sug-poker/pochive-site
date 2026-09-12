@@ -15,6 +15,16 @@ function PlanCard({ tier, highlight }: { tier: 'free' | 'analyzer'; highlight?: 
         {highlight && <span className="badge">おすすめ</span>}
         <h3>{plan.name}</h3>
       </div>
+      {plan.price ? (
+        <div className="pricing-card-price">
+          <span className="pricing-card-price-monthly">{plan.price.monthly}<span>/月</span></span>
+          <span className="pricing-card-price-yearly">年額 {plan.price.yearly}</span>
+        </div>
+      ) : (
+        <div className="pricing-card-price">
+          <span className="pricing-card-price-monthly">無料</span>
+        </div>
+      )}
       <ul>
         {plan.features.map((f) => (
           <li key={f.label}>{f.label}</li>
