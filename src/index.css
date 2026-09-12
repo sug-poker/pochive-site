@@ -115,3 +115,56 @@ a {
   background: var(--bg);
   border-radius: 10px;
 }
+
+/* ── Nav ── */
+
+.nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 24px;
+  transition: background 0.25s, backdrop-filter 0.25s;
+}
+
+.nav--scrolled {
+  background: rgba(10, 15, 13, 0.85);
+  backdrop-filter: blur(12px);
+}
+
+.nav-logo {
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--gold);
+  letter-spacing: -0.5px;
+}
+
+.nav-links {
+  display: flex;
+  list-style: none;
+  gap: 32px;
+}
+
+.nav-links a {
+  color: var(--muted);
+  font-size: 14px;
+  font-weight: 600;
+  transition: color 0.15s;
+}
+
+.nav-links a:hover {
+  color: var(--text);
+}
+
+@media (max-width: 768px) {
+  .nav-links {
+    gap: 20px;
+  }
+  .nav-links a {
+    font-size: 13px;
+  }
+}

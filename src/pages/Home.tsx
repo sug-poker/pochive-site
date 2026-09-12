@@ -1,7 +1,12 @@
+import Nav from '../components/Nav'
+
 export default function Home() {
   return (
-    <div>
-      <p style={{ padding: 32, color: 'var(--gold)' }}>Pochive — building…</p>
-    </div>
+    <>
+      <Nav />
+      <main>
+        <p style={{ padding: '120px 32px', color: 'var(--gold)' }}>Pochive — building…</p>
+      </main>
+    </>
   )
 }
