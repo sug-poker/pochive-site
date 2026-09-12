@@ -23,7 +23,8 @@ jobs:
         with:
           repository: sug-poker/pochive
           token: ${{ secrets.POCHIVE_TOKEN }}
-          path: ../pochive
+          path: _pochive
+      - run: ln -sfn ${{ github.workspace }}/_pochive ${{ github.workspace }}/../pochive
       - uses: actions/setup-node@v4
         with:
           node-version: 20
