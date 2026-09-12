@@ -15,7 +15,7 @@ export default function HeroSection() {
           </a>
         </div>
         <div className="iphone-frame">
-          <div className="iphone-screen" />
+          <img src="/screenshots/home.png" alt="Pochive ホーム画面" className="iphone-screen" />
         </div>
       </div>
     </section>
