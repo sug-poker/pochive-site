@@ -24,12 +24,14 @@ jobs:
           repository: sug-poker/pochive
           token: ${{ secrets.POCHIVE_TOKEN }}
           path: _pochive
-      - run: ln -sfn ${{ github.workspace }}/_pochive ${{ github.workspace }}/../pochive
       - uses: actions/setup-node@v4
         with:
           node-version: 20
           cache: npm
       - run: npm ci
+      - run: |
+          rm -rf node_modules/@pochive/plans
+          cp -r _pochive/packages/plans node_modules/@pochive/plans
       - run: npm run build
       - uses: actions/upload-pages-artifact@v3
         with:
