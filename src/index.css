@@ -57,33 +57,35 @@ a {
 /* ── iPhone mockup ── */
 
 .iphone-frame {
-  width: 220px;
-  height: 440px;
+  width: 340px;
+  height: 680px;
   border: 2px solid var(--border);
-  border-radius: 36px;
+  border-radius: 48px;
   background: var(--surface);
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
   position: relative;
+  box-shadow: 0 32px 80px rgba(0, 0, 0, 0.6);
 }
 
 .iphone-frame::before {
   content: '';
   position: absolute;
-  top: 14px;
-  width: 60px;
-  height: 6px;
+  top: 18px;
+  width: 90px;
+  height: 10px;
   background: var(--border);
-  border-radius: 3px;
+  border-radius: 5px;
 }
 
 .iphone-screen {
-  width: 182px;
-  height: 370px;
+  width: 290px;
+  height: 590px;
   background: var(--bg);
-  border-radius: 26px;
+  border-radius: 38px;
+  object-fit: cover;
 }
 
 .iphone-frame-sm {
@@ -114,6 +116,7 @@ a {
   height: 104px;
   background: var(--bg);
   border-radius: 10px;
+  object-fit: cover;
 }
 
 /* ── Nav ── */
