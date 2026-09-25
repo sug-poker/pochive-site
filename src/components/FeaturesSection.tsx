@@ -10,8 +10,8 @@ const FEATURES = [
     img: '/screenshots/hands.png',
   },
   {
-    title: 'バンクロール管理',
-    desc: '現在残高・推奨 Buy-in・ストップロスを自動計算。入出金履歴で資金を可視化。',
+    title: 'バンクロール・統計',
+    desc: '現在残高・推奨 Buy-in・ストップロスを自動計算。残高推移グラフや成長率、入出金履歴で資金の動きを可視化。',
     img: '/screenshots/bankroll.png',
   },
   {
