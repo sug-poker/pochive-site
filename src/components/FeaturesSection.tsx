@@ -15,9 +15,9 @@ const FEATURES = [
     img: '/screenshots/bankroll.png',
   },
   {
-    title: '統計・分析',
-    desc: 'P&L グラフ・ドローダウン・ROI・時給など詳細統計で実力を数値化（Analyzer プラン）。',
-    img: '/screenshots/stats.png',
+    title: '遠征管理',
+    desc: '海外・国内遠征ごとにセッションをまとめて管理。航空券・ホテル・食事などの経費も含めた遠征収支や勝率・時給を一目で把握。',
+    img: '/screenshots/trip.png',
   },
 ] as const
 
