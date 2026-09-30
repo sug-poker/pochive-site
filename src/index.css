@@ -161,6 +161,10 @@ a {
   gap: 20px;
 }
 
+.hero-content .badge {
+  align-self: flex-start;
+}
+
 .hero-logo {
   font-size: 72px;
   font-weight: 800;
@@ -220,6 +224,10 @@ a {
 
   .hero-content {
     align-items: center;
+  }
+
+  .hero-content .badge {
+    align-self: center;
   }
 
   .hero-logo {
