@@ -169,6 +169,16 @@ a {
   line-height: 1;
 }
 
+.hero-logo-sub {
+  display: block;
+  margin-top: 14px;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--muted);
+  letter-spacing: 0.5px;
+  line-height: 1.4;
+}
+
 .hero-tagline {
   font-size: 28px;
   font-weight: 700;

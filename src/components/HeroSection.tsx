@@ -4,7 +4,10 @@ export default function HeroSection() {
       <div className="hero">
         <div className="hero-content">
           <span className="badge">App Store で配信中</span>
-          <h1 className="hero-logo">Pochive</h1>
+          <h1 className="hero-logo">
+            Pochive
+            <span className="hero-logo-sub">ポーカー収支管理・ハンド記録アプリ</span>
+          </h1>
           <p className="hero-tagline">ポーカーを、記録する。</p>
           <p className="hero-desc">
             セッション・ハンド・バンクロールを一元管理。<br />
