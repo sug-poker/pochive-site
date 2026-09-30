@@ -33,7 +33,13 @@ export default function FeaturesSection() {
           >
             <div className="feature-row-phone">
               <div className="iphone-frame-md">
-                <img src={f.img} alt={f.title} className="iphone-screen-md" />
+                <img
+                  src={f.img}
+                  alt={`Pochive ${f.title}画面`}
+                  className="iphone-screen-md"
+                  loading="lazy"
+                  decoding="async"
+                />
               </div>
             </div>
             <div className="feature-row-body">
