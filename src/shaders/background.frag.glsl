@@ -20,7 +20,7 @@ void main(){
   col += GOLD * (smoothstep(.04,.0,abs(ds))*.9 + smoothstep(.03,-.03,ds)*.18 + exp(-max(ds,0.)*12.)*.12)
        * glow * (.35 + .9*light);
   // hero: a hand is dealt, scanned and recorded into the app
-  if(uHero > .001) col += heroDeal(p, light) * uHero;
+  if(uHero > .001) col += heroTable(p, light) * uHero;
   col += featureFx(p);
   col *= smoothstep(1.4,.2,length(uv-.5)*1.6);
   gl_FragColor = vec4(col,1.);

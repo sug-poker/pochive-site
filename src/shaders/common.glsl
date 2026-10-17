@@ -4,7 +4,7 @@ uniform float uTime;
 uniform vec2 uLight;
 uniform float uHero;
 uniform vec2 uPhone;
-uniform vec3 uCards;
+uniform vec3 uTable;
 uniform float uStacked;
 uniform vec4 uF0;
 uniform vec4 uF1;

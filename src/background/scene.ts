@@ -10,11 +10,23 @@ export interface Rect {
   height: number
 }
 
-// Width of the hero card scene (2 hole cards + 5 board cards) in card-height units.
-export const CARD_SCENE_WIDTH = 5.5
+// Width-to-height ratio of the hero table scene.
+export const TABLE_SCENE_ASPECT = 2.3
 
-// Loop time at which the hero shows every card already recorded as gold wireframe.
-export const REDUCED_MOTION_TIME = 8.0
+// Length of the hero hand loop in seconds (must match hero.glsl).
+export const HERO_LOOP = 17
+
+// Loop time after the hand is settled and the phone shows the bankroll.
+export const REDUCED_MOTION_TIME = 15.8
+
+// When a packet from the table lands in the hero phone (must match hero.glsl):
+// actions arrive 1.0s after they happen, street deals and the showdown 1.2s after, the pot at 14.7s.
+const ACTION_TIMES = [1.0, 2.0, 4.6, 5.4, 6.3, 8.6, 9.4, 11.0, 11.9]
+const STREET_TIMES = [3.4, 7.6, 10.0, 13.2]
+const PHONE_ARRIVALS = [...ACTION_TIMES.map((t) => t + 1.0), ...STREET_TIMES.map((t) => t + 1.2), 14.7]
+const PING_LENGTH = 0.22
+const BANKROLL_FROM = 14.6
+const BANKROLL_UNTIL = 16.8
 
 const clamp01 = (x: number) => Math.min(1, Math.max(0, x))
 const smoothstep = (t: number) => t * t * (3 - 2 * t)
@@ -63,10 +75,21 @@ export function lightTarget(input: {
   return mouse ?? heroOnScreen ?? [viewport.width * 0.7, viewport.height * 0.45]
 }
 
-export function cardSceneRect(anchor: Rect, centered: boolean): { left: number; centerY: number; unit: number } {
-  const unit = Math.min(anchor.height, anchor.width / CARD_SCENE_WIDTH)
-  const left = centered ? anchor.left + (anchor.width - unit * CARD_SCENE_WIDTH) / 2 : anchor.left
-  return { left, centerY: anchor.top + anchor.height / 2, unit }
+export function tableSceneRect(anchor: Rect): { centerX: number; centerY: number; unit: number } {
+  return {
+    centerX: anchor.left + anchor.width / 2,
+    centerY: anchor.top + anchor.height / 2,
+    unit: Math.min(anchor.height, anchor.width / TABLE_SCENE_ASPECT),
+  }
+}
+
+// What the hero phone shows at a point in the loop, and whether its frame flashes.
+export function heroPhoneState(time: number): { screen: 'hands' | 'bankroll'; ping: boolean } {
+  const t = time % HERO_LOOP
+  return {
+    screen: t >= BANKROLL_FROM && t < BANKROLL_UNTIL ? 'bankroll' : 'hands',
+    ping: PHONE_ARRIVALS.some((at) => t >= at && t < at + PING_LENGTH),
+  }
 }
 
 export function renderSettings(env: {

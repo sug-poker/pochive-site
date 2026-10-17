@@ -1,11 +1,12 @@
 import { useEffect, useRef } from 'react'
 import {
   REDUCED_MOTION_TIME,
-  cardSceneRect,
   featureAmount,
   heroFade,
+  heroPhoneState,
   lightTarget,
   renderSettings,
+  tableSceneRect,
   textSide,
   type Point,
 } from '../background/scene'
@@ -37,8 +38,8 @@ export default function ShaderBackground() {
     }
 
     const ratio = settings.pixelRatio
-    const heroPhoneEl = document.querySelector('[data-shader-anchor="hero-phone"]')
-    const heroCardsEl = document.querySelector('[data-shader-anchor="hero-cards"]')
+    const heroPhoneEl = document.querySelector<HTMLElement>('[data-shader-anchor="hero-phone"]')
+    const heroTableEl = document.querySelector('[data-shader-anchor="hero-table"]')
     const heroSection = document.getElementById('hero')
     const featureEls = [...document.querySelectorAll('[data-shader-anchor="feature"]')]
     // Device pixels, y up, as the shader expects.
@@ -65,19 +66,20 @@ export default function ShaderBackground() {
         ? [light[0] + (target[0] - light[0]) * 0.05, light[1] + (target[1] - light[1]) * 0.05]
         : target
 
-      const cards = heroCardsEl
-        ? cardSceneRect(heroCardsEl.getBoundingClientRect(), stacked)
-        : { left: 0, centerY: 0, unit: 1 }
-      const [cardsX, cardsY] = toDevice([cards.left, cards.centerY])
+      const table = heroTableEl
+        ? tableSceneRect(heroTableEl.getBoundingClientRect())
+        : { centerX: 0, centerY: 0, unit: 1 }
+      const [tableX, tableY] = toDevice([table.centerX, table.centerY])
+      const time = settings.animate ? (now - t0) / 1000 : REDUCED_MOTION_TIME
       const sides = featurePhones.map((c) => textSide(c[0], vw, stacked))
 
       const uniforms: Uniforms = {
         res: [canvas.width, canvas.height],
-        time: settings.animate ? (now - t0) / 1000 : REDUCED_MOTION_TIME,
+        time,
         light: toDevice(light),
         hero: heroSection ? heroFade(heroSection.getBoundingClientRect().bottom, vh) : 0,
         phone: toDevice(heroPhone ?? [vw / 2, vh / 2]),
-        cards: [cardsX, cardsY, cards.unit * ratio],
+        table: [tableX, tableY, table.unit * ratio],
         stacked: stacked ? 1 : 0,
         features: featureRects.map((r, i) => {
           const [x, y] = toDevice(featurePhones[i])
@@ -86,6 +88,14 @@ export default function ShaderBackground() {
         featureSides: [sides[0] ?? 0, sides[1] ?? 0, sides[2] ?? 0, sides[3] ?? 0],
       }
       renderer.draw(uniforms)
+
+      // The hero phone follows the same clock: screenshot switch and a flash when a packet lands.
+      // Only DOM attributes change, so the prerendered markup still hydrates as-is.
+      if (heroPhoneEl) {
+        const phone = heroPhoneState(time)
+        if (heroPhoneEl.dataset.screen !== phone.screen) heroPhoneEl.dataset.screen = phone.screen
+        heroPhoneEl.classList.toggle('is-ping', phone.ping)
+      }
     }
 
     const loop = (now: number) => {
