@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { featureAmount, heroFade, lightTarget, renderSettings, textSide } from './scene'
+import { featureAmount, frameDue, heroFade, lightTarget, renderSettings, textSide } from './scene'
 
 describe('heroFade', () => {
   it('is 1 while the hero still fills most of the viewport', () => {
@@ -64,11 +64,22 @@ describe('renderSettings', () => {
     expect(renderSettings({ stacked: false, coarsePointer: false, reducedMotion: false, devicePixelRatio: 2 }))
       .toEqual({ pixelRatio: 1.5, fbmOctaves: 5, animate: true, maxFps: 60 })
   })
-  it('mobile (narrow or coarse pointer): dpr 1, 3 fbm octaves', () => {
-    expect(renderSettings({ stacked: true, coarsePointer: false, reducedMotion: false, devicePixelRatio: 3 }).pixelRatio).toBe(1)
-    expect(renderSettings({ stacked: false, coarsePointer: true, reducedMotion: false, devicePixelRatio: 3 }).fbmOctaves).toBe(3)
+  it('mobile (narrow or coarse pointer): dpr capped at 2, 3 fbm octaves, 30fps', () => {
+    expect(renderSettings({ stacked: true, coarsePointer: false, reducedMotion: false, devicePixelRatio: 3 }))
+      .toEqual({ pixelRatio: 2, fbmOctaves: 3, animate: true, maxFps: 30 })
+    expect(renderSettings({ stacked: false, coarsePointer: true, reducedMotion: false, devicePixelRatio: 1 }).pixelRatio).toBe(1)
   })
   it('reduced motion turns animation off', () => {
     expect(renderSettings({ stacked: false, coarsePointer: false, reducedMotion: true, devicePixelRatio: 1 }).animate).toBe(false)
+  })
+})
+
+describe('frameDue', () => {
+  it('draws every animation frame at 60fps', () => {
+    expect(frameDue(1016.7, 1000, 60)).toBe(true)
+  })
+  it('skips every other 60Hz frame at 30fps, with a little slack for timer jitter', () => {
+    expect(frameDue(1016.7, 1000, 30)).toBe(false)
+    expect(frameDue(1032.5, 1000, 30)).toBe(true)
   })
 })

@@ -61,9 +61,16 @@ export function renderSettings(env: {
 }): { pixelRatio: number; fbmOctaves: number; animate: boolean; maxFps: number } {
   const mobile = env.stacked || env.coarsePointer
   return {
-    pixelRatio: mobile ? 1 : Math.min(env.devicePixelRatio, 1.5),
+    pixelRatio: Math.min(env.devicePixelRatio, mobile ? 2 : 1.5),
     fbmOctaves: mobile ? 3 : 5,
     animate: !env.reducedMotion,
-    maxFps: 60,
+    // Phones render at 2x for crisp lines and pay for it with half the frame rate.
+    maxFps: mobile ? 30 : 60,
   }
+}
+
+// Whether enough time has passed since the last drawn frame to draw again at maxFps.
+// A couple of milliseconds of slack keeps 30fps steady on 60Hz timers.
+export function frameDue(now: number, lastDrawn: number, maxFps: number): boolean {
+  return now - lastDrawn >= 1000 / maxFps - 2
 }

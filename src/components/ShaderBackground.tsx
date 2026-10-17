@@ -2,6 +2,7 @@ import { useEffect, useRef } from 'react'
 import {
   REDUCED_MOTION_TIME,
   featureAmount,
+  frameDue,
   heroFade,
   lightTarget,
   renderSettings,
@@ -83,8 +84,12 @@ export default function ShaderBackground() {
       renderer.draw(uniforms)
     }
 
+    let lastDrawn = -Infinity
     const loop = (now: number) => {
-      draw(now)
+      if (frameDue(now, lastDrawn, settings.maxFps)) {
+        lastDrawn = now
+        draw(now)
+      }
       raf = requestAnimationFrame(loop)
     }
     const start = () => {
