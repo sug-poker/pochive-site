@@ -1,6 +1,6 @@
 // Hero: an abstract racetrack table outline around the hero phone, in the same line-art
-// manner as the feature effects. Three lights circle the rail and every HERO_DROP_PERIOD
-// one leaves it and drops into the phone (timing must match heroPhonePing in scene.ts).
+// manner as the feature effects. Three lights circle the rail and every DROP_PERIOD
+// one leaves it and drops into the phone.
 // q is phone-local: the phone centre is the origin and 1 unit is the phone height (uPhone.z).
 
 const float TRACK_L = .42;   // half length of the straight edge

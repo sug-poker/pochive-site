@@ -235,15 +235,8 @@ footer {
   opacity: 0.85;
 }
 
-/* Hero phone: its frame glows briefly (is-ping) whenever a light from the table outline lands in it. */
 .hero-phone {
   grid-area: phone;
-  transition: box-shadow 0.5s;
-}
-
-.hero-phone.is-ping {
-  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(201, 168, 76, 0.7), 0 0 50px rgba(201, 168, 76, 0.35);
-  transition: box-shadow 0.08s;
 }
 
 @media (max-width: 768px) {

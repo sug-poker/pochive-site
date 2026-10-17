@@ -3,7 +3,6 @@ import {
   REDUCED_MOTION_TIME,
   featureAmount,
   heroFade,
-  heroPhonePing,
   lightTarget,
   renderSettings,
   textSide,
@@ -11,7 +10,6 @@ import {
 } from '../background/scene'
 import { buildFragmentSource } from '../background/shaderSource'
 import { createRenderer, watchContextLoss, type Uniforms } from '../background/renderer'
-import { applyHeroPhone, resetHeroPhone } from '../background/heroPhone'
 
 const center = (r: DOMRect): Point => [r.left + r.width / 2, r.top + r.height / 2]
 
@@ -83,9 +81,6 @@ export default function ShaderBackground() {
         featureSides: [sides[0] ?? 0, sides[1] ?? 0, sides[2] ?? 0, sides[3] ?? 0],
       }
       renderer.draw(uniforms)
-
-      // The hero phone follows the same clock: its frame flashes when a light lands in it.
-      if (heroPhoneEl) applyHeroPhone(heroPhoneEl, heroPhonePing(time))
     }
 
     const loop = (now: number) => {
@@ -118,7 +113,6 @@ export default function ShaderBackground() {
       lost = true
       stop()
       root.classList.add('no-webgl')
-      if (heroPhoneEl) resetHeroPhone(heroPhoneEl)
     })
 
     resize()
@@ -136,7 +130,6 @@ export default function ShaderBackground() {
       window.removeEventListener('scroll', drawStill)
       window.removeEventListener('mousemove', onMouseMove)
       document.removeEventListener('visibilitychange', onVisibility)
-      if (heroPhoneEl) resetHeroPhone(heroPhoneEl)
       renderer.dispose()
     }
   }, [])

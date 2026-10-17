@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { REDUCED_MOTION_TIME, featureAmount, heroFade, heroPhonePing, lightTarget, renderSettings, textSide } from './scene'
+import { featureAmount, heroFade, lightTarget, renderSettings, textSide } from './scene'
 
 describe('heroFade', () => {
   it('is 1 while the hero still fills most of the viewport', () => {
@@ -56,20 +56,6 @@ describe('lightTarget', () => {
   })
   it('ignores feature phones further than 40% of a viewport from the centre', () => {
     expect(lightTarget({ scrollY: 2000, viewport, mouse: [5, 5], heroPhone: null, featurePhones: [[300, 900]] })).toEqual([5, 5])
-  })
-})
-
-describe('heroPhonePing', () => {
-  it('flashes for 0.22s each time a light drops into the phone (every 3.2s, landing at 55% of the cycle)', () => {
-    expect(heroPhonePing(1.77)).toBe(true)
-    expect(heroPhonePing(1.75)).toBe(false)
-    expect(heroPhonePing(1.97)).toBe(true)
-    expect(heroPhonePing(1.99)).toBe(false)
-    expect(heroPhonePing(3.2 * 4 + 1.8)).toBe(true)
-    expect(heroPhonePing(0.5)).toBe(false)
-  })
-  it('does not flash in the reduced-motion still', () => {
-    expect(heroPhonePing(REDUCED_MOTION_TIME)).toBe(false)
   })
 })
 
