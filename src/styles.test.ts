@@ -1,6 +1,8 @@
+/// <reference types="node" />
 import { readFileSync } from 'node:fs'
 import { describe, expect, it } from 'vitest'
 
+// Read the stylesheet from disk: Vitest blanks CSS imports, even with ?raw.
 const css = readFileSync(new URL('./index.css', import.meta.url), 'utf8')
 
 describe('index.css', () => {
