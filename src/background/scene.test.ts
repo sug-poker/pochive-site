@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { featureAmount, frameDue, heroFade, lightTarget, renderSettings, textSide } from './scene'
+import { canvasSize, featureAmount, frameDue, heroFade, lightTarget, renderSettings, textSide } from './scene'
 
 describe('heroFade', () => {
   it('is 1 while the hero still fills most of the viewport', () => {
@@ -76,10 +76,20 @@ describe('renderSettings', () => {
 
 describe('frameDue', () => {
   it('draws every animation frame at 60fps', () => {
-    expect(frameDue(1016.7, 1000, 60)).toBe(true)
+    expect(frameDue(1016.7, 1000, 60, false)).toBe(true)
   })
   it('skips every other 60Hz frame at 30fps, with a little slack for timer jitter', () => {
-    expect(frameDue(1016.7, 1000, 30)).toBe(false)
-    expect(frameDue(1032.5, 1000, 30)).toBe(true)
+    expect(frameDue(1016.7, 1000, 30, false)).toBe(false)
+    expect(frameDue(1032.5, 1000, 30, false)).toBe(true)
+  })
+  it('draws every frame while the page is scrolling so effects keep up with their phones', () => {
+    expect(frameDue(1008.3, 1000, 30, true)).toBe(true)
+  })
+})
+
+describe('canvasSize', () => {
+  it('sizes the drawing buffer from the canvas CSS box, not the window', () => {
+    expect(canvasSize(390, 664, 2)).toEqual([780, 1328])
+    expect(canvasSize(375.5, 667.25, 1.5)).toEqual([563, 1001])
   })
 })

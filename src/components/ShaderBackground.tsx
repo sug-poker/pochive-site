@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react'
 import {
   REDUCED_MOTION_TIME,
+  canvasSize,
   featureAmount,
   frameDue,
   heroFade,
@@ -40,8 +41,14 @@ export default function ShaderBackground() {
     const heroPhoneEl = document.querySelector<HTMLElement>('[data-shader-anchor="hero-phone"]')
     const heroSection = document.getElementById('hero')
     const featureEls = [...document.querySelectorAll('[data-shader-anchor="feature"]')]
-    // Device pixels, y up, as the shader expects.
-    const toDevice = ([x, y]: Point): [number, number] => [x * ratio, (window.innerHeight - y) * ratio]
+    // Device pixels, y up, as the shader expects. The fixed canvas sits at the viewport origin,
+    // so its own CSS box (not window.innerHeight, which lags iOS toolbar changes) is the frame.
+    const toDevice = ([x, y]: Point): [number, number] => [x * ratio, (canvas.clientHeight - y) * ratio]
+    // Match the drawing buffer to the canvas box whenever it changes size.
+    const fitCanvas = () => {
+      const [w, h] = canvasSize(canvas.clientWidth, canvas.clientHeight, ratio)
+      if (w !== canvas.width || h !== canvas.height) renderer.resize(w, h)
+    }
 
     let mouse: Point | null = null
     let light: Point | null = null
@@ -51,8 +58,9 @@ export default function ShaderBackground() {
     const t0 = performance.now()
 
     const draw = (now: number) => {
-      const vw = window.innerWidth
-      const vh = window.innerHeight
+      fitCanvas()
+      const vw = canvas.clientWidth
+      const vh = canvas.clientHeight
       const stacked = narrow.matches
       const heroPhoneRect = heroPhoneEl?.getBoundingClientRect()
       const heroPhone = heroPhoneRect ? center(heroPhoneRect) : null
@@ -85,9 +93,12 @@ export default function ShaderBackground() {
     }
 
     let lastDrawn = -Infinity
+    let lastScrollY = window.scrollY
     const loop = (now: number) => {
-      if (frameDue(now, lastDrawn, settings.maxFps)) {
+      const scrolling = window.scrollY !== lastScrollY
+      if (frameDue(now, lastDrawn, settings.maxFps, scrolling)) {
         lastDrawn = now
+        lastScrollY = window.scrollY
         draw(now)
       }
       raf = requestAnimationFrame(loop)
@@ -107,7 +118,7 @@ export default function ShaderBackground() {
     }
 
     const resize = () => {
-      renderer.resize(Math.round(window.innerWidth * ratio), Math.round(window.innerHeight * ratio))
+      fitCanvas()
       drawStill()
     }
     const onMouseMove = (e: MouseEvent) => {

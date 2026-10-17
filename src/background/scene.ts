@@ -69,8 +69,15 @@ export function renderSettings(env: {
   }
 }
 
-// Whether enough time has passed since the last drawn frame to draw again at maxFps.
+// Whether to draw this animation frame. While the page scrolls every frame is drawn so the
+// effects anchored to phones keep pace with them; otherwise frames are spaced to maxFps.
 // A couple of milliseconds of slack keeps 30fps steady on 60Hz timers.
-export function frameDue(now: number, lastDrawn: number, maxFps: number): boolean {
-  return now - lastDrawn >= 1000 / maxFps - 2
+export function frameDue(now: number, lastDrawn: number, maxFps: number, scrolling: boolean): boolean {
+  return scrolling || now - lastDrawn >= 1000 / maxFps - 2
+}
+
+// Drawing-buffer size for a canvas whose CSS box is width x height. Measuring the canvas itself
+// (not the window) keeps it unstretched while iOS Safari's toolbars grow and shrink.
+export function canvasSize(width: number, height: number, ratio: number): [number, number] {
+  return [Math.round(width * ratio), Math.round(height * ratio)]
 }
