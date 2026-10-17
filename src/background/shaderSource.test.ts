@@ -20,6 +20,10 @@ describe('buildFragmentSource', () => {
   it('never draws grid pulses, chips or the table oval', () => {
     expect(src).not.toMatch(/pulseX|chip\(|rail/)
   })
+  it('lights up the fixed embossed suits instead of a separate suit-node grid', () => {
+    expect(src).not.toMatch(/p\*14\./)
+    expect(src).toContain('float glow = ')
+  })
   it('vertex shader passes the full-screen triangle through', () => {
     expect(VERTEX_SOURCE).toContain('gl_Position')
   })

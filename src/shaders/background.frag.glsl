@@ -13,15 +13,14 @@ void main(){
   float ds = suit(tf*3.6, fract((mod(ti.x,4.))/4.+.01));
   col += vec3(.05,.12,.08) * smoothstep(.03,-.03,ds) * light * .5;
   col -= vec3(.01,.02,.015) * smoothstep(.05,.0,abs(ds)) * light;
+  // a few of those embossed suits light up in gold now and then; held back in the hero
+  float h = hash(ti);
+  float phase = fract(uTime*.12 + h*7.);
+  float glow = smoothstep(0.,.2,phase) * smoothstep(.55,.25,phase) * step(.88, h) * (1. - .7*uHero);
+  col += GOLD * (smoothstep(.04,.0,abs(ds))*.9 + smoothstep(.03,-.03,ds)*.18 + exp(-max(ds,0.)*12.)*.12)
+       * glow * (.35 + .9*light);
   // hero: a hand is dealt, scanned and recorded into the app
   if(uHero > .001) col += heroDeal(p, light) * uHero;
-  // suit nodes: sparse and only under the light, outside the hero
-  vec2 g = p*14.; vec2 gi = floor(g); vec2 gf = fract(g)-.5;
-  float h = hash(gi);
-  float phase = fract(uTime*.18 + h*7.);
-  float life = smoothstep(0.,.15,phase) * smoothstep(.5,.2,phase) * step(.9, h) * clamp(light*1.2,0.,1.) * (1.-uHero);
-  float d = suit(gf*3.2, fract(h*13.7));
-  col += GOLD * (smoothstep(.05,.0,abs(d))*1.1 + smoothstep(.03,-.03,d)*.35) * life * (.6 + .8*light) * .5;
   col += featureFx(p);
   col *= smoothstep(1.4,.2,length(uv-.5)*1.6);
   gl_FragColor = vec4(col,1.);
