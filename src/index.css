@@ -57,7 +57,8 @@ footer {
   display: block;
 }
 
-.no-webgl .shader-layer {
+.no-webgl .shader-layer,
+.shader-layer[hidden] {
   display: none;
 }
 
