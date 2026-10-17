@@ -19,7 +19,7 @@ export default function HeroSection() {
           </a>
         </div>
         <div className="iphone-frame hero-phone" data-shader-anchor="hero-phone">
-          <img src="/screenshots/hands.png" alt="Pochive ハンド記録画面" className="iphone-screen" />
+          <img src="/screenshots/home.png" alt="Pochive ホーム画面" className="iphone-screen" />
         </div>
       </div>
     </section>

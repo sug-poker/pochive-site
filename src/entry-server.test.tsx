@@ -10,10 +10,10 @@ describe('prerender output', () => {
     expect(html.match(/data-shader-anchor="hero-phone"/g)).toHaveLength(1)
     expect(html.match(/data-shader-anchor="feature"/g)).toHaveLength(4)
   })
-  it('shows a single hand-log screenshot in the hero phone, with no table scene or seat labels', () => {
+  it('shows a single home-screen screenshot in the hero phone, with no table scene or seat labels', () => {
     const hero = html.slice(html.indexOf('<section id="hero">'), html.indexOf('</section>'))
     expect(hero.match(/<img /g)).toHaveLength(1)
-    expect(hero).toContain('/screenshots/hands.png')
+    expect(hero).toContain('/screenshots/home.png')
     expect(hero).not.toMatch(/hero-table|hero-seat/)
   })
   it('renders one effect layer canvas for the hero and one per feature, hidden from assistive tech', () => {
