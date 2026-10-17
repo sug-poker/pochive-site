@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<title>Pochive Hero テーブル案</title>
+<style>
+  :root { --bg:#0a0f0d; --surface:#111a14; --text:#f0e6c8; --gold:#c9a84c; --muted:#8a9b8e; --border:#1c2b22; }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { background:#050807; color:var(--text); font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif; padding:32px 24px 64px; }
+  h2 { font-size:22px; margin-bottom:6px; }
+  .subtitle { color:var(--muted); font-size:14px; margin-bottom:24px; line-height:1.6; }
+  .hint, .cards { max-width:1120px; margin:0 auto; }
+  .cards { display:flex; flex-direction:column; gap:28px; }
+  .card { border:1px solid var(--border); border-radius:16px; overflow:hidden; cursor:pointer; background:var(--surface); transition:border-color .2s, box-shadow .2s; }
+  .card.selected { border-color:var(--gold); box-shadow:0 0 0 1px var(--gold), 0 0 40px rgba(201,168,76,.15); }
+  .stage { position:relative; height:620px; }
+  .stage canvas { position:absolute; inset:0; width:100%; height:100%; display:block; }
+  .copy { position:absolute; left:48px; top:56px; display:flex; flex-direction:column; gap:12px; pointer-events:none; }
+  .badge { align-self:flex-start; border:1px solid rgba(201,168,76,.35); color:var(--gold); background:rgba(10,15,13,.5); border-radius:20px; padding:4px 14px; font-size:11px; font-weight:700; letter-spacing:1.5px; }
+  .logo { font-size:56px; font-weight:800; letter-spacing:-2.5px; line-height:1; }
+  .logo small { display:block; margin-top:8px; font-size:13px; font-weight:600; letter-spacing:.5px; color:var(--muted); }
+  .tag { font-size:22px; font-weight:700; color:var(--gold); }
+  .btn { align-self:flex-start; background:var(--gold); color:var(--bg); font-weight:700; font-size:13px; padding:10px 20px; border-radius:10px; box-shadow:0 0 30px rgba(201,168,76,.25); }
+
+  .phone { position:absolute; right:56px; top:64px; width:236px; height:492px; border:1px solid rgba(201,168,76,.28); border-radius:40px; background:rgba(8,12,10,.85); padding:10px; box-shadow:0 30px 80px rgba(0,0,0,.6), 0 0 60px rgba(201,168,76,.08); pointer-events:none; }
+  .screen { width:100%; height:100%; border-radius:31px; background:#0a0f0d; overflow:hidden; display:flex; flex-direction:column; font-size:11px; }
+  .bar { padding:14px 16px 8px; display:flex; justify-content:space-between; color:var(--text); font-size:11px; font-weight:700; }
+  .title { padding:2px 16px 10px; font-size:13px; font-weight:800; display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid rgba(201,168,76,.12); }
+  .title .tagp { font-size:9px; color:var(--gold); border:1px solid rgba(201,168,76,.4); border-radius:8px; padding:1px 6px; }
+  .rows { flex:1; padding:8px 12px; display:flex; flex-direction:column; gap:5px; overflow:hidden; justify-content:flex-end; }
+  .row { display:flex; gap:8px; align-items:baseline; padding:6px 8px; border-radius:8px; background:#111a14; animation:pop .45s ease-out; }
+  .row .who { color:var(--gold); font-weight:700; min-width:30px; font-family:ui-monospace,Menlo,monospace; font-size:10px; }
+  .row .what { color:var(--text); }
+  .row.street { background:transparent; padding:4px 8px 0; color:var(--muted); font-size:10px; letter-spacing:1px; }
+  .row.result { background:rgba(201,168,76,.14); border:1px solid rgba(201,168,76,.4); }
+  .row.result .what { color:var(--gold); font-weight:800; }
+  @keyframes pop { from { opacity:0; transform:translateY(8px) scale(.97); box-shadow:0 0 0 1px var(--gold); } to { opacity:1; transform:none; } }
+  .summary { margin:auto 12px 16px; padding:14px; border-radius:14px; background:#111a14; border:1px solid rgba(201,168,76,.35); display:none; flex-direction:column; gap:8px; animation:pop .6s ease-out; }
+  .summary.on { display:flex; }
+  .summary .k { color:var(--muted); font-size:10px; }
+  .summary .v { color:var(--text); font-size:12px; font-weight:700; }
+  .summary .big { color:var(--gold); font-size:26px; font-weight:800; letter-spacing:-.5px; }
+  .graph { margin:12px; padding:12px; border-radius:14px; background:#111a14; }
+  .graph .total { font-size:22px; font-weight:800; color:#4fbf8a; letter-spacing:-.5px; transition:color .3s; }
+  .graph .sub { color:var(--muted); font-size:10px; margin-bottom:6px; }
+  .graph svg { width:100%; height:130px; display:block; }
+  .list { margin:0 12px; display:flex; flex-direction:column; gap:5px; }
+  .item { display:flex; justify-content:space-between; padding:7px 9px; border-radius:8px; background:#111a14; }
+  .item b { color:#4fbf8a; }
+  .item.new { animation:pop .5s ease-out; box-shadow:inset 0 0 0 1px rgba(201,168,76,.5); }
+
+  .screen { position:relative; }
+  .track { flex:1; display:flex; width:200%; transition:transform .6s cubic-bezier(.6,0,.2,1); min-height:0; }
+  .track.session { transform:translateX(-50%); }
+  .pane { width:50%; display:flex; flex-direction:column; min-height:0; }
+  .letter { font-size:12px; }
+  .labels { position:absolute; inset:0; pointer-events:none; }
+  .pos { position:absolute; transform:translate(-50%,-50%); font:700 9px ui-monospace,Menlo,monospace; letter-spacing:1.5px; color:var(--muted); opacity:.8; }
+  .pos.me { color:var(--gold); opacity:1; }
+  .phone.shots { height:auto; padding:10px; transition:box-shadow .5s; }
+  .phone.shots .screen { position:relative; height:auto; aspect-ratio:1284/2778; }
+  .shot { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; opacity:0; transition:opacity .6s; }
+  .shot.on { opacity:1; }
+  .phone.ping { box-shadow:0 30px 80px rgba(0,0,0,.6), 0 0 0 1px rgba(201,168,76,.7), 0 0 50px rgba(201,168,76,.35); transition:box-shadow .08s; }
+  .card-body { padding:18px 22px 22px; display:flex; gap:16px; align-items:flex-start; }
+  .letter { flex-shrink:0; width:32px; height:32px; border-radius:50%; border:1px solid var(--gold); color:var(--gold); display:grid; place-items:center; font-weight:800; }
+  .card-body h3 { font-size:17px; margin-bottom:6px; }
+  .card-body p { color:var(--muted); font-size:14px; line-height:1.7; }
+</style>
+</head>
+<body>
+<div class="hint">
+  <h2>線画テーブル ＋ 実際のスクリーンショット切り替え</h2>
+  <p class="subtitle">テーブル・席・チップ・カードをすべて塗りなしの細い金の線で描き、明るさも機能セクションの演出（下の参考画像）に揃えました。スマホはアプリの実際のスクリーンショットで、ハンド中は「ハンド記録」、決着後は「バンクロール・統計」に切り替わります。光の粒が届くたびにスマホの縁がふっと光ります。</p>
+</div>
+<div class="cards">
+  <div class="card selected" data-choice="line-art" onclick="toggleSelect(this)">
+    <div class="stage" data-mode="3" data-style="2">
+      <canvas></canvas>
+      <div class="labels"></div>
+      <div class="copy"><span class="badge">APP STORE で配信中</span><div class="logo">Pochive<small>ポーカー収支管理・ハンド記録アプリ</small></div><div class="tag">ポーカーを、記録する。</div><span class="btn">App Store でダウンロード</span></div>
+      <div class="phone shots"><div class="screen">
+        <img class="shot on" src="/files/shot-hands.png" alt="">
+        <img class="shot" src="/files/shot-bankroll.png" alt="">
+      </div></div>
+    </div>
+    <div class="card-body"><div class="letter">線</div><div><h3>Hero（線画テーブル）</h3><p>卓の縁・レール・ベッティングライン・席・チップ・カードを線だけで表現。アクション時に席がふっと光り、光の粒がスマホへ飛びます。</p></div></div>
+  </div>
+  <div class="card" style="cursor:default">
+    <img src="/files/ref-feature-hand.png" alt="" style="display:block;width:100%">
+    <div class="card-body"><div class="letter">参</div><div><h3>参考：現在の機能セクション（02 ハンド記録）</h3><p>この線の細さ・明るさに合わせています。</p></div></div>
+  </div>
+</div>
+
+<script>
+const LOOP = 17.0;
+// Timeline shared by the shader (as constants) and the phone UI.
+const LOG = [
+  { t: 0.4, who: 'BTN', what: 'A♠ K♠' },
+  { t: 1.0, who: 'BTN', what: 'Raise 2.5BB' },
+  { t: 2.0, who: 'BB', what: 'Call' },
+  { t: 3.4, street: 'FLOP　K♦ 9♣ 4♥' },
+  { t: 4.6, who: 'BB', what: 'Check' },
+  { t: 5.4, who: 'BTN', what: 'Bet 3BB' },
+  { t: 6.3, who: 'BB', what: 'Call' },
+  { t: 7.6, street: 'TURN　2♠' },
+  { t: 8.6, who: 'BB', what: 'Check' },
+  { t: 9.4, who: 'BTN', what: 'Check' },
+  { t: 10.0, street: 'RIVER　A♥' },
+  { t: 11.0, who: 'BB', what: 'Bet 8BB' },
+  { t: 11.9, who: 'BTN', what: 'Call' },
+  { t: 13.2, who: 'SD', what: 'BB K♣ Q♣ ／ BTN wins 27BB', result: true },
+];
+
+const VERT = 'attribute vec2 p; void main(){ gl_Position = vec4(p,0.,1.); }';
+const FRAG = `
+precision highp float;
+uniform vec2 uRes; uniform float uTime; uniform vec2 uPhone; uniform float uMode; uniform vec2 uMouse; uniform float uStyle;
+const vec3 GOLD = vec3(.79,.66,.30);
+const vec3 CREAM = vec3(.94,.9,.78);
+const vec3 MUTED = vec3(.54,.61,.56);
+const float LOOP = 17.;
+float hash(vec2 p){ p = fract(p*vec2(123.34,456.21)); p += dot(p,p+45.32); return fract(p.x*p.y); }
+float noise(vec2 p){ vec2 i=floor(p), f=fract(p); f=f*f*(3.-2.*f);
+  return mix(mix(hash(i),hash(i+vec2(1,0)),f.x), mix(hash(i+vec2(0,1)),hash(i+vec2(1,1)),f.x), f.y); }
+float fbm(vec2 p){ float v=0., a=.5; for(int i=0;i<4;i++){ v+=a*noise(p); p*=2.03; a*=.5; } return v; }
+float sdHeart(vec2 p){ p.x=abs(p.x); p.y+=.5;
+  if(p.y+p.x>1.) return sqrt(dot(p-vec2(.25,.75),p-vec2(.25,.75)))-sqrt(2.)/4.;
+  return sqrt(min(dot(p-vec2(0,1),p-vec2(0,1)), dot(p-.5*max(p.x+p.y,0.),p-.5*max(p.x+p.y,0.))))*sign(p.x-p.y); }
+float sdBox(vec2 p, vec2 b){ vec2 d=abs(p)-b; return length(max(d,0.))+min(max(d.x,d.y),0.); }
+float sdRoundBox(vec2 p, vec2 b, float r){ vec2 d=abs(p)-b+r; return length(max(d,0.))+min(max(d.x,d.y),0.)-r; }
+float suit(vec2 p, float k){
+  float stem = sdBox(p-vec2(0,-.55), vec2(.06,.25));
+  if(k<.25) return sdHeart(p*1.2)/1.2;
+  if(k<.5) return min(sdHeart(vec2(p.x,-p.y-.15)*1.3)/1.3, stem);
+  if(k<.75) return (abs(p.x)*1.3+abs(p.y)-.75)*.6;
+  float c = min(min(length(p-vec2(0,.32)), length(p-vec2(-.33,-.12))), length(p-vec2(.33,-.12)))-.3;
+  return min(c, stem);
+}
+float line(float d, float w){ return smoothstep(w,0.,abs(d)); }
+mat2 rot(float a){ float c=cos(a), s=sin(a); return mat2(c,-s,s,c); }
+float ease(float x){ x=clamp(x,0.,1.); return x*x*(3.-2.*x); }
+
+// ---- table layout: a racetrack table seen at a tilt. "t space" = un-tilted table plane ----
+const vec2 C = vec2(-.2,-.19);
+const float TILT = .42;
+const float L = .22;   // half length of the straight edge
+const float RR = .30;  // end-cap radius (felt edge)
+const float RAIL = .07;
+const vec2 R = vec2(L+RR+RAIL, (RR+RAIL)*TILT);  // outer half-extent on screen
+vec2 toT(vec2 p){ vec2 q = p - C; q.y /= TILT; return q; }
+vec2 fromT(vec2 q){ return C + vec2(q.x, q.y*TILT); }
+float sdTable(vec2 q){ return length(vec2(max(abs(q.x)-L,0.), q.y)) - RR; }
+vec2 seatT(float k){
+  if(k<.5) return vec2(0.,-.43);
+  if(k<1.5) return vec2(.43,-.33);
+  if(k<2.5) return vec2(.43,.33);
+  if(k<3.5) return vec2(0.,.43);
+  if(k<4.5) return vec2(-.43,.33);
+  return vec2(-.43,-.33);
+}
+vec2 seatPos(float k){ return fromT(seatT(k)); }
+vec2 betPos(float k){ return fromT(seatT(k)*.52); }
+vec2 potPos(){ return fromT(vec2(0.,.12)); }
+
+// ---- timeline (keep in sync with LOG in JS) ----
+float actTime(int i){ if(i==0) return 1.; if(i==1) return 2.; if(i==2) return 4.6; if(i==3) return 5.4; if(i==4) return 6.3; if(i==5) return 8.6; if(i==6) return 9.4; if(i==7) return 11.; return 11.9; }
+float actSeat(int i){ if(i==0||i==3||i==6||i==8) return 0.; return 2.; }
+// bets: seat, placed at, collected at
+float betSeat(int i){ return (i==0||i==2||i==5) ? 0. : 2.; }
+float betT(int i){ if(i==0) return 1.; if(i==1) return 2.; if(i==2) return 5.4; if(i==3) return 6.3; if(i==4) return 11.; return 11.9; }
+float betC(int i){ return i<2 ? 2.8 : (i<4 ? 7.1 : 12.6); }
+float boardT(int i){ if(i<3) return 3.4 + float(i)*.12; if(i==3) return 7.6; return 10.; }
+float boardKind(int i){ if(i==0) return .6; if(i==1) return .9; if(i==2) return .1; if(i==3) return .4; return .1; }
+const float SHOWDOWN = 13.2;
+const float WIN = 13.7;
+
+vec3 chip(vec2 p, vec2 c, out float m){
+  float d = length(p-c) - .013;
+  m = smoothstep(.0015,-.0015,d);
+  float a = atan(p.y-c.y, p.x-c.x);
+  float stripe = step(.5, fract(a/6.2831*6.)) * step(.009, length(p-c));
+  return mix(vec3(.16,.13,.07), GOLD, .55 + .45*stripe) * (.8 + .4*smoothstep(.013,.0,length(p-c-vec2(.004,.004))));
+}
+
+// draws one card into col; wire blends to gold wireframe
+void drawCard(inout vec3 col, vec2 p, vec2 c, float ang, float kind, float flip, float a, float wire, float light){
+  if(a <= 0.) return;
+  vec2 q = rot(ang)*(p-c);
+  float squash = max(abs(cos(flip*3.1416)), .06);
+  q.x /= squash;
+  float faceUp = step(.5, flip);
+  float d = sdRoundBox(q, vec2(.02,.029), .004);
+  float face = smoothstep(.0015,-.0015,d);
+  float pd = suit(q*58., kind)/58.;
+  vec3 front = mix(vec3(.075,.12,.09), CREAM, smoothstep(.0012,-.0012,pd));
+  float lattice = line(fract((q.x+q.y)*90.)-.5,.12) + line(fract((q.x-q.y)*90.)-.5,.12);
+  vec3 back = mix(vec3(.05,.085,.065), GOLD*.45, lattice*.5);
+  vec3 phys = mix(back, front, faceUp) * (.5 + 1.*light) + MUTED*line(d,.0012)*.5;
+  vec3 wireC = GOLD*(line(d,.0012)*1.4 + line(pd,.001)*faceUp*1.1) + vec3(.02,.04,.03)*face;
+  col = mix(col, phys, face*a*(1.-wire));
+  col += wireC * a * wire;
+  col -= vec3(.03)*smoothstep(.008,.0,d)*(1.-face)*a*(1.-wire);
+}
+
+void main(){
+  vec2 uv = gl_FragCoord.xy/uRes; vec2 p = (gl_FragCoord.xy - .5*uRes)/uRes.y;
+  vec2 lp = (uMouse - .5*uRes)/uRes.y;
+  float T = mod(uTime, LOOP);
+  int mode = int(uMode + .5);
+  float fadeAll = smoothstep(0.,.4,T) * (1. - smoothstep(16.3,16.9,T));
+
+  // room felt + spotlight
+  float grain = fbm(gl_FragCoord.xy*.35)*.5 + fbm(p*6.)*.5;
+  vec3 col = mix(vec3(.02,.05,.035), vec3(.045,.11,.07), grain);
+  float light = exp(-2.*length((p-lp)*vec2(.75,1.1)));
+  col *= .35 + 1.4*light;
+
+  // scan (mode B): after the hand, a beam turns the whole table into gold wireframe
+  float beamX = mix(C.x-R.x*1.35, C.x+R.x*1.35, ease((T-14.)/1.3));
+  float wire = (mode==1) ? step(14.,T)*step(p.x, beamX) : 0.;
+  float lineArt = step(1.5, uStyle);
+  float beamOn = (mode==1) ? smoothstep(13.9,14.,T)*(1.-smoothstep(15.3,15.5,T)) : 0.;
+
+  // table
+  vec2 tq = toT(p);
+  float d = sdTable(tq);
+  float feltM = smoothstep(.006,-.006,d);
+  float railM = smoothstep(-.006,.006,d) * smoothstep(RAIL+.006,RAIL-.006,d);
+  int style = int(uStyle + .5);
+  vec3 tablePhys = col;
+  if(style == 2){
+    // line art: no fills, thin gold lines at the weight of the feature effects
+    tablePhys += GOLD*(line(d,.004)*.55 + line(d-RAIL,.003)*.22);
+    tablePhys += GOLD*line(d+.12,.003)*.18*step(.5,fract(atan(tq.y,tq.x)*14.));
+  } else if(style == 0){
+    // luxury: soft drop shadow, deep felt pooled under the light, rounded leather rail with sheen, gold inlay
+    tablePhys *= 1. - .6*smoothstep(.16,.0, sdTable(toT(p + vec2(0.,.03))) - RAIL);
+    vec3 feltC = mix(vec3(.02,.07,.045), vec3(.07,.19,.11), .35*fbm(p*14.) + .65*smoothstep(.45,.0,length(tq*vec2(.8,1.)))) * (.55 + 1.2*light);
+    float rt = clamp(d/RAIL, 0., 1.);
+    float bulge = sin(rt*3.1416);
+    vec3 railC = vec3(.018,.026,.021) + vec3(.045,.055,.045)*bulge*(.4+light) + CREAM*.14*pow(bulge,14.)*(.25+1.6*light);
+    tablePhys = mix(tablePhys, feltC, feltM);
+    tablePhys = mix(tablePhys, railC, railM);
+    tablePhys += GOLD*line(d+.008,.004)*(.55+.9*light);
+    tablePhys += GOLD*line(d-RAIL,.003)*.3;
+    tablePhys += GOLD*line(d+.12,.003)*.22*feltM;
+  } else {
+    // HUD: dark glass slab, faint grid and a slow radar sweep, glowing gold hairlines
+    float grid = line(fract(tq.x*26.)-.5,.05) + line(fract(tq.y*26.)-.5,.05);
+    float sweep = pow(fract(atan(tq.y,tq.x)/6.2831 - uTime*.07), 10.);
+    vec3 glass = vec3(.015,.04,.03) + GOLD*grid*.035 + GOLD*sweep*.09;
+    tablePhys = mix(tablePhys*.8, glass*(.7+.9*light), feltM);
+    tablePhys += GOLD*(line(d,.004)*1.1 + exp(-abs(d)*45.)*.14);
+    tablePhys += GOLD*line(d-.055,.003)*.45;
+    float ang = atan(tq.y,tq.x);
+    tablePhys += GOLD*line(d+.12,.003)*.3*step(.45,fract(ang*14.))*feltM;
+  }
+  vec3 tableWire = col*.7 + GOLD*(line(d,.004)*1.2 + line(d-RAIL,.003)*.9 + line(d+.12,.003)*.6)
+                 + GOLD*feltM*line(fract(p.y*160.)-.5,.1)*.08;
+  col = mix(tablePhys, tableWire, wire);
+
+  // seats: leather pads (luxury) or thin arcs (HUD), lighting up on each action
+  for(int s=0;s<6;s++){
+    float fs = float(s);
+    vec2 sq = tq - seatT(fs);
+    float ds = length(sq) - .055;
+    float playing = (s==0||s==2) ? 1. : 1. - .6*smoothstep(1.2,1.6,T);
+    float act = 0.;
+    for(int i=0;i<9;i++){ if(abs(actSeat(i)-fs)<.5){ float dt=T-actTime(i); act += step(0.,dt)*exp(-dt*2.5); } }
+    if(style == 2){
+      col += mix(GOLD*.28, GOLD*1.1, act) * line(ds,.004) * playing;
+    } else if(style == 0){
+      vec3 pad = vec3(.025,.035,.03)*(.7+light) + vec3(.03,.04,.035)*smoothstep(.055,.0,length(sq+vec2(.015,-.02)));
+      col = mix(col, pad, smoothstep(.006,-.006,ds)*(1.-wire));
+      col += mix(MUTED*.35, GOLD, act) * line(ds,.004) * playing;
+    } else {
+      float arc = step(.35, fract(atan(sq.y,sq.x)/6.2831*2. + .1));
+      col += mix(GOLD*.45, GOLD*1.2, act) * line(ds,.004) * playing * arc;
+      col += GOLD * line(length(sq)-.02,.01) * .25 * playing;
+    }
+    col += GOLD * exp(-max(ds,0.)*25.) * act * (style==2 ? .25 : .45);
+    col += GOLD * line(ds,.004) * wire;
+  }
+  // dealer button
+  { vec2 db = seatPos(0.) + vec2(.06,.035); float d = length(p-db)-.008;
+    col = mix(col, CREAM*(.6+light), smoothstep(.0015,-.0015,d)*(1.-max(wire,lineArt))); col += GOLD*line(d,.0012)*(wire+lineArt*.6); }
+
+  // hole cards: hero face up, villain face down until showdown
+  for(int i=0;i<2;i++){
+    float fi = float(i);
+    float a = ease((T-.3-fi*.1)/.35) * fadeAll;
+    vec2 hp = mix(C, seatPos(0.)+vec2(-.012+fi*.026,.06), a);
+    drawCard(col, p, hp, (fi-.5)*.18, .4, 1., a*(1.-.35*lineArt), max(wire,lineArt), light);
+    vec2 vp = mix(C, seatPos(2.)+vec2(-.07+fi*.026,-.035), a);
+    drawCard(col, p, vp, (fi-.5)*.18, .9, ease((T-SHOWDOWN-fi*.1)/.35), a*(1.-.35*lineArt), max(wire,lineArt), light);
+  }
+  // board
+  for(int i=0;i<5;i++){
+    float t0 = boardT(i);
+    float a = ease((T-t0)/.3) * fadeAll;
+    vec2 bp = C + vec2((float(i)-2.)*.048, -.012 + (1.-a)*.03);
+    drawCard(col, p, bp, 0., boardKind(i), ease((T-t0-.15)/.3), a*(1.-.35*lineArt), max(wire,lineArt), light);
+  }
+  // bets and the pot
+  float potAmt = 0.;
+  for(int i=0;i<6;i++){
+    float tb = betT(i), tc = betC(i);
+    float s = betSeat(i);
+    if(T < tb) continue;
+    potAmt += step(tc+.4, T);
+    vec2 pos = mix(seatPos(s), betPos(s), ease((T-tb)/.4));
+    pos = mix(pos, potPos(), ease((T-tc)/.4));
+    if(T > tc+.4) continue;
+    float m; vec3 cc = chip(p, pos, m);
+    col = mix(col, cc*(.6+light), m*(1.-max(wire,lineArt))*fadeAll);
+    col += GOLD*line(length(p-pos)-.013,.0015)*(wire + lineArt*.8*fadeAll);
+  }
+  // pot stack; after the win it slides to the BTN (A, B) or streams into the phone (C)
+  if(potAmt > 0.){
+    vec2 pos = potPos();
+    float gone = 0.;
+    if(mode < 2) pos = mix(pos, betPos(0.), ease((T-WIN)/.7));
+    else gone = step(WIN, T);
+    for(int j=0;j<3;j++){
+      float fj = float(j);
+      if(fj >= potAmt) break;
+      vec2 cpos = pos + vec2(fj*.018-.018, fj*.004);
+      float m; vec3 cc = chip(p, cpos, m);
+      col = mix(col, cc*(.6+light), m*(1.-max(wire,lineArt))*fadeAll*(1.-gone));
+      col += GOLD*line(length(p-cpos)-.013,.0015)*(wire + lineArt*.8*(1.-gone))*fadeAll;
+    }
+  }
+
+  vec2 ph = (uPhone - .5*uRes)/uRes.y;
+  // A: every action sends a packet from its seat into the phone
+  if(mode==0 || mode==3){
+    for(int i=0;i<9;i++){
+      float dt = T - actTime(i) - .1;
+      if(dt < 0. || dt > 1.) continue;
+      vec2 a0 = seatPos(actSeat(i));
+      float s = ease(dt/.9);
+      vec2 q = mix(a0, ph + vec2(0.,-.12), s);
+      q.y += sin(s*3.1416)*.14;
+      col += GOLD * (exp(-length(p-q)*220.)*2. + exp(-length(p-q)*40.)*.15) * (1.-smoothstep(.85,1.,dt)) * (1.-.4*lineArt);
+    }
+    // board deals and the showdown also report in
+    for(int i=0;i<4;i++){
+      float t0 = i==0 ? 3.4 : (i==1 ? 7.6 : (i==2 ? 10. : 13.2));
+      float dt = T - t0 - .3;
+      if(dt < 0. || dt > 1.) continue;
+      float s = ease(dt/.9);
+      vec2 q = mix(C, ph + vec2(0.,-.12), s); q.y += sin(s*3.1416)*.16;
+      col += GOLD * (exp(-length(p-q)*220.)*2. + exp(-length(p-q)*40.)*.15) * (1.-smoothstep(.85,1.,dt));
+    }
+  }
+  // B: after the scan the wireframe streams into the phone
+  if(mode==1){
+    col += GOLD*(exp(-abs(p.x-beamX)*500.)*1.3 + exp(-abs(p.x-beamX)*40.)*.15) * beamOn * smoothstep(.3,.0,abs(p.y-C.y)-R.y);
+    for(int j=0;j<18;j++){
+      float fj = float(j);
+      float dt = T - 15. - fj*.06;
+      if(dt < 0. || dt > 1.2) continue;
+      float ang = hash(vec2(fj,1.))*6.2831; float rr = sqrt(hash(vec2(fj,2.)));
+      vec2 a0 = C + vec2(cos(ang),sin(ang))*R*rr;
+      float s = ease(dt/1.1);
+      vec2 q = mix(a0, ph + vec2(0.,-.05), s); q.y += sin(s*3.1416)*(.08+.1*hash(vec2(fj,3.)));
+      col += GOLD * exp(-length(p-q)*240.) * 1.8 * (1.-s*.6);
+    }
+  }
+  // C: the pot pours into the phone as a stream of chips-turned-light
+  if(mode==2 || mode==3){
+    for(int j=0;j<16;j++){
+      float fj = float(j);
+      float dt = T - WIN - fj*.05;
+      if(dt < 0. || dt > 1.1) continue;
+      float s = ease(dt/1.);
+      vec2 q = mix(potPos() + vec2(hash(vec2(fj,4.))*.04-.02, 0.), ph + vec2(0.,.08), s);
+      q.y += sin(s*3.1416)*(.12+.06*hash(vec2(fj,5.)));
+      float sz = mix(.01, .002, s);
+      float d = length(p-q) - sz;
+      col += GOLD * (smoothstep(.002,-.002,d)*1.4 + exp(-max(d,0.)*120.)*.5) * (1.-smoothstep(.9,1.1,dt));
+    }
+  }
+
+  col *= smoothstep(1.45,.25,length(uv-.5)*1.6);
+  gl_FragColor = vec4(col,1.);
+}`;
+
+document.querySelectorAll('.stage').forEach(stage => {
+  const mode = +stage.dataset.mode;
+  const cv = stage.querySelector('canvas');
+  const phone = stage.querySelector('.phone');
+  const gl = cv.getContext('webgl', { antialias: false });
+  if (!gl) return;
+  const mk = (t, s) => { const sh = gl.createShader(t); gl.shaderSource(sh, s); gl.compileShader(sh);
+    if (!gl.getShaderParameter(sh, gl.COMPILE_STATUS)) console.error(gl.getShaderInfoLog(sh)); return sh; };
+  const pr = gl.createProgram(); gl.attachShader(pr, mk(gl.VERTEX_SHADER, VERT)); gl.attachShader(pr, mk(gl.FRAGMENT_SHADER, FRAG));
+  gl.linkProgram(pr); gl.useProgram(pr);
+  gl.bindBuffer(gl.ARRAY_BUFFER, gl.createBuffer());
+  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1,-1,3,-1,-1,3]), gl.STATIC_DRAW);
+  const loc = gl.getAttribLocation(pr, 'p'); gl.enableVertexAttribArray(loc); gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
+  const U = n => gl.getUniformLocation(pr, n);
+  const uRes = U('uRes'), uTime = U('uTime'), uPhone = U('uPhone'), uMode = U('uMode'), uMouse = U('uMouse'), uStyle = U('uStyle');
+  const style = +stage.dataset.style;
+  const dpr = Math.min(devicePixelRatio, 1.5);
+  const resize = () => { cv.width = cv.clientWidth * dpr; cv.height = cv.clientHeight * dpr; gl.viewport(0, 0, cv.width, cv.height); };
+  resize(); addEventListener('resize', resize);
+  let mouse = null, light = null, visible = true;
+  stage.addEventListener('mousemove', e => { const r = cv.getBoundingClientRect(); mouse = [e.clientX - r.left, e.clientY - r.top]; });
+  new IntersectionObserver(([en]) => visible = en.isIntersecting).observe(cv);
+
+  // 6-max position labels, placed outside each seat (same constants as the shader)
+  const SEATS = [[0,-.43],[.43,-.33],[.43,.33],[0,.43],[-.43,.33],[-.43,-.33]], NAMES = ['BTN','SB','BB','UTG','HJ','CO'];
+  const labels = stage.querySelector('.labels');
+  SEATS.forEach(([x, y], i) => { const el = document.createElement('span'); el.className = 'pos' + (i === 0 ? ' me' : ''); el.textContent = NAMES[i];
+    const k = 1.2, H = cv.clientHeight, W = cv.clientWidth; const px = -.2 + x*k, py = -.19 + y*k*.42;
+    el.style.left = (W/2 + px*H) + 'px'; el.style.top = (H/2 - py*H) + 'px'; labels.appendChild(el); });
+  // phone UI driven by the same timeline
+  const rows = stage.querySelector('.rows');
+  const summary = stage.querySelector('.summary');
+  const poly = stage.querySelector('polyline'), dot = stage.querySelector('circle'), total = stage.querySelector('.total'), list = stage.querySelector('.list');
+  let pnl = [0, 6, 2, 14, 11, 25, 31, 27, 42.5];
+  const drawGraph = () => {
+    const pts = pnl.slice(-9); const max = Math.max(...pts, 1), min = Math.min(...pts, 0);
+    const xy = pts.map((v, i) => [i * 200 / (pts.length - 1), 120 - (v - min) / (max - min) * 105]);
+    poly.setAttribute('points', xy.map(p => p.join(',')).join(' '));
+    dot.setAttribute('cx', xy[xy.length - 1][0]); dot.setAttribute('cy', xy[xy.length - 1][1]);
+    total.textContent = `+${pnl[pnl.length - 1]} BB`;
+  };
+  if (poly) { drawGraph(); ['#127 · +3.0', '#126 · -4.5', '#125 · +15.5'].forEach(t => { const d = document.createElement('div'); d.className = 'item'; d.innerHTML = `<span>Hand ${t.split(' · ')[0]}</span><b>${t.split(' · ')[1]} BB</b>`; list.appendChild(d); }); }
+  let shown = 0, lastT = 0, handNo = 128, added = false;
+  // phone: real screenshots, switched by the same timeline; the frame pings when a packet lands
+  const shots = stage.querySelectorAll('.shot');
+  const ARRIVALS = [...LOG.map(e => e.t + (e.street ? 1.25 : 1.0)), 14.7];
+  let next = 0, prevT = 0;
+  const ui = T => {
+    if (T < prevT) next = 0;
+    prevT = T;
+    const session = T >= 14.6 && T < 16.8;
+    shots[0].classList.toggle('on', !session); shots[1].classList.toggle('on', session);
+    while (next < ARRIVALS.length && T >= ARRIVALS[next]) {
+      next++; phone.classList.add('ping'); setTimeout(() => phone.classList.remove('ping'), 220);
+    }
+  };
+
+  const t0 = performance.now();
+  const frame = now => {
+    if (visible) {
+      const t = (now - t0) / 1000, T = t % 17;
+      const sr = cv.getBoundingClientRect(), pr2 = phone.getBoundingClientRect();
+      const target = mouse || [sr.width * .38, sr.height * .62];
+      light = light ? [light[0] + (target[0] - light[0]) * .06, light[1] + (target[1] - light[1]) * .06] : target;
+      gl.uniform2f(uRes, cv.width, cv.height); gl.uniform1f(uTime, t); gl.uniform1f(uMode, mode); gl.uniform1f(uStyle, style);
+      gl.uniform2f(uMouse, light[0] * dpr, (sr.height - light[1]) * dpr);
+      gl.uniform2f(uPhone, (pr2.left - sr.left + pr2.width / 2) * dpr, (sr.height - (pr2.top - sr.top + pr2.height / 2)) * dpr);
+      gl.drawArrays(gl.TRIANGLES, 0, 3);
+      ui(T);
+    }
+    requestAnimationFrame(frame);
+  };
+  requestAnimationFrame(frame);
+});
+</script>
+</body>
+</html>

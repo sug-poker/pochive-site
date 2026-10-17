@@ -17,8 +17,8 @@ export default function HeroSection() {
             App Store でダウンロード
           </a>
         </div>
-        <div className="iphone-frame">
-          <img src="/screenshots/home.png" alt="Pochive ホーム画面" className="iphone-screen" />
+        <div className="iphone-frame hero-phone" data-shader-anchor="hero-phone">
+          <img src="/screenshots/hands.png" alt="Pochive ハンド記録画面" className="iphone-screen" />
         </div>
       </div>
     </section>

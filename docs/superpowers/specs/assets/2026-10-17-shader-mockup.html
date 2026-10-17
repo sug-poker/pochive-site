@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pochive A-4 ページ全体 v5</title>
+<style>
+  :root { --bg:#0a0f0d; --surface:#111a14; --text:#f0e6c8; --gold:#c9a84c; --muted:#8a9b8e; --border:#1c2b22; --glass:rgba(10,18,13,.55); }
+  *, *::before, *::after { box-sizing:border-box; margin:0; padding:0; }
+  html { scroll-behavior:smooth; }
+  body { background:var(--bg); color:var(--text); font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif; }
+  a { color:inherit; text-decoration:none; }
+  #bg { position:fixed; inset:0; width:100vw; height:100vh; z-index:0; display:block; }
+  main, nav, footer { position:relative; z-index:1; }
+
+  .note { position:fixed; right:16px; bottom:16px; z-index:200; max-width:300px; background:rgba(0,0,0,.75); border:1px solid #333; color:#ccc; font-size:12px; line-height:1.6; padding:10px 12px; border-radius:10px; }
+  .note b { color:var(--gold); }
+
+  .nav { position:fixed; top:0; left:0; right:0; z-index:100; display:flex; align-items:center; justify-content:space-between; padding:16px 24px; transition:background .25s; }
+  .nav.scrolled { background:rgba(8,13,10,.6); backdrop-filter:blur(14px); border-bottom:1px solid rgba(201,168,76,.12); }
+  .nav-logo { font-size:20px; font-weight:800; color:var(--gold); letter-spacing:-.5px; }
+  .nav-links { display:flex; list-style:none; gap:32px; }
+  .nav-links a { color:var(--muted); font-size:14px; font-weight:600; }
+  .nav-links a:hover { color:var(--text); }
+
+  .section-inner { max-width:1100px; margin:0 auto; padding:120px 24px; }
+  .eyebrow { display:block; text-align:center; color:var(--gold); font-size:12px; font-weight:700; letter-spacing:4px; margin-bottom:12px; opacity:.85; }
+  .section-title { font-size:32px; font-weight:800; text-align:center; margin-bottom:56px; }
+  .badge { display:inline-block; border:1px solid rgba(201,168,76,.35); color:var(--gold); background:rgba(10,15,13,.5); border-radius:20px; padding:4px 14px; font-size:12px; font-weight:700; letter-spacing:1.5px; backdrop-filter:blur(6px); }
+
+  .hero { min-height:100vh; display:flex; align-items:center; gap:64px; max-width:1100px; margin:0 auto; padding:120px 24px 80px; }
+  .hero-content { flex:1; display:flex; flex-direction:column; gap:20px; }
+  .hero-content .badge { align-self:flex-start; }
+  .hero-logo { font-size:72px; font-weight:800; letter-spacing:-3px; line-height:1; }
+  .hero-logo small { display:block; margin-top:14px; font-size:15px; font-weight:600; color:var(--muted); letter-spacing:.5px; }
+  .hero-tagline { font-size:28px; font-weight:700; color:var(--gold); }
+  .hero-desc { font-size:16px; color:var(--muted); line-height:1.75; max-width:420px; }
+  .btn { display:inline-block; align-self:flex-start; background:var(--gold); color:var(--bg); font-weight:700; font-size:15px; padding:14px 28px; border-radius:12px; box-shadow:0 0 30px rgba(201,168,76,.25); }
+
+  .phone { border:1px solid rgba(201,168,76,.28); border-radius:48px; background:rgba(8,12,10,.8); padding:14px; box-shadow:0 30px 80px rgba(0,0,0,.6), 0 0 60px rgba(201,168,76,.08); flex-shrink:0; }
+  .phone img { display:block; border-radius:36px; }
+  .phone-lg img { width:300px; }
+  .phone-md { border-radius:40px; padding:12px; }
+  .phone-md img { width:220px; border-radius:30px; }
+
+  .feature-row { display:flex; align-items:center; gap:80px; padding:64px 0; border-bottom:1px solid rgba(201,168,76,.1); }
+  .feature-row:last-child { border-bottom:none; }
+  .feature-row.rev { flex-direction:row-reverse; }
+  .feature-body { flex:1; display:flex; flex-direction:column; gap:16px; }
+  .feature-num { font-family:ui-monospace,Menlo,monospace; color:var(--gold); font-size:13px; letter-spacing:2px; opacity:.8; }
+  .feature-body h3 { font-size:24px; font-weight:800; }
+  .feature-body p { font-size:16px; color:var(--muted); line-height:1.8; }
+
+  .pricing-cards { display:grid; grid-template-columns:repeat(2,1fr); gap:24px; margin-bottom:48px; }
+  .pcard { background:var(--glass); backdrop-filter:blur(16px); border:1px solid rgba(201,168,76,.15); border-radius:18px; padding:32px; display:flex; flex-direction:column; gap:16px; }
+  .pcard.hl { border-color:var(--gold); box-shadow:0 0 0 1px rgba(201,168,76,.4), 0 0 60px rgba(201,168,76,.12); }
+  .pcard h3 { font-size:24px; font-weight:800; }
+  .price { font-size:34px; font-weight:800; color:var(--gold); letter-spacing:-1px; }
+  .price span { font-size:14px; color:var(--muted); letter-spacing:0; }
+  .pcard ul { list-style:none; display:flex; flex-direction:column; gap:10px; }
+  .pcard li { font-size:14px; color:var(--text); padding-left:20px; position:relative; }
+  .pcard li::before { content:'♠'; position:absolute; left:0; color:var(--gold); font-size:11px; top:2px; }
+  table { width:100%; border-collapse:collapse; background:var(--glass); backdrop-filter:blur(16px); border:1px solid rgba(201,168,76,.15); border-radius:18px; overflow:hidden; font-size:14px; }
+  th, td { padding:12px 18px; text-align:center; border-bottom:1px solid rgba(201,168,76,.08); }
+  th { color:var(--gold); font-size:12px; letter-spacing:1.5px; }
+  td:first-child, th:first-child { text-align:left; }
+  td { color:var(--muted); }
+  td.y { color:var(--gold); }
+
+  .contact { text-align:center; }
+  .contact p { color:var(--muted); margin-bottom:20px; }
+  .contact a { color:var(--gold); font-size:20px; font-weight:700; border-bottom:1px solid rgba(201,168,76,.4); padding-bottom:4px; }
+
+  .footer { max-width:1100px; margin:0 auto; padding:32px 24px; display:flex; justify-content:space-between; color:var(--muted); font-size:13px; border-top:1px solid rgba(201,168,76,.1); }
+  .footer nav { display:flex; gap:20px; }
+
+  @media (max-width:768px){
+    .hero { flex-direction:column-reverse; text-align:center; padding-top:100px; gap:40px; }
+    .hero-content { align-items:center; } .hero-content .badge, .btn { align-self:center; }
+    .hero-logo { font-size:52px; } .hero-tagline { font-size:22px; }
+    .phone-lg img { width:240px; }
+    .feature-row, .feature-row.rev { flex-direction:column; gap:32px; }
+    .pricing-cards { grid-template-columns:1fr; }
+    .nav-links { gap:18px; } .nav-links a { font-size:13px; }
+    .note { display:none; }
+  }
+</style>
+</head>
+<body>
+<canvas id="bg"></canvas>
+
+<div class="note"><b>v5</b>：Hero を「ポーカーを、記録する。」の物語に。カードが配られ → 光のラインが走査して金のワイヤーフレームに変わり → 光の粒がアプリ（スマホ）へ流れ込みます。約11秒でループ。</div>
+
+<nav class="nav" id="nav">
+  <a href="#" class="nav-logo">Pochive</a>
+  <ul class="nav-links"><li><a href="#features">機能</a></li><li><a href="#pricing">料金</a></li><li><a href="#contact">お問い合わせ</a></li></ul>
+</nav>
+
+<main>
+  <section class="hero">
+    <div class="hero-content">
+      <span class="badge">App Store で配信中</span>
+      <h1 class="hero-logo">Pochive<small>ポーカー収支管理・ハンド記録アプリ</small></h1>
+      <p class="hero-tagline">ポーカーを、記録する。</p>
+      <p class="hero-desc">セッション・ハンド・バンクロールを一元管理。<br>あなたのポーカーをデータで支える iOS アプリ。</p>
+      <a class="btn" href="#">App Store でダウンロード</a>
+    </div>
+    <div class="phone phone-lg" data-spot><img src="/files/shot-home.png" alt=""></div>
+  </section>
+
+  <section id="features"><div class="section-inner">
+    <span class="eyebrow">FEATURES</span>
+    <h2 class="section-title">機能</h2>
+    <div class="feature-row"><div class="phone phone-md" data-spot><img src="/files/shot-records.png" alt="" loading="lazy"></div>
+      <div class="feature-body"><span class="feature-num">01 / SESSION</span><h3>セッション記録</h3><p>キャッシュゲーム・トーナメントのセッションを無制限に記録・管理。入退店時刻・損益を追跡。</p></div></div>
+    <div class="feature-row rev"><div class="phone phone-md" data-spot><img src="/files/shot-hands.png" alt="" loading="lazy"></div>
+      <div class="feature-body"><span class="feature-num">02 / HAND</span><h3>ハンド記録</h3><p>プレイしたハンドをホールカード・ボード・アクションまで詳細に記録。タグやレビューポイントで後から振り返りやすく。</p></div></div>
+    <div class="feature-row"><div class="phone phone-md" data-spot><img src="/files/shot-bankroll.png" alt="" loading="lazy"></div>
+      <div class="feature-body"><span class="feature-num">03 / BANKROLL</span><h3>バンクロール・統計</h3><p>現在残高・推奨 Buy-in・ストップロスを自動計算し、入出金履歴で資金を管理。残高推移グラフ・ドローダウン・ROI・勝率・時給などの詳細統計で実力を数値化（Analyzer プラン）。</p></div></div>
+    <div class="feature-row rev"><div class="phone phone-md" data-spot><img src="/files/shot-trip.png" alt="" loading="lazy"></div>
+      <div class="feature-body"><span class="feature-num">04 / TRIP</span><h3>遠征管理</h3><p>海外・国内遠征ごとにセッションをまとめて管理。航空券・ホテル・食事などの経費も含めた遠征収支や勝率・時給を一目で把握。</p></div></div>
+  </div></section>
+
+  <section id="pricing"><div class="section-inner">
+    <span class="eyebrow">PRICING</span>
+    <h2 class="section-title">料金プラン</h2>
+    <div class="pricing-cards">
+      <div class="pcard"><h3>無料</h3><div class="price">無料</div>
+        <ul><li>セッション記録（無制限）</li><li>直近件数までの履歴閲覧</li><li>バンクロール基本管理</li><li>ハンド記録（無制限）</li><li>バックアップ</li></ul></div>
+      <div class="pcard hl"><div><span class="badge">おすすめ</span></div><h3>Analyzer</h3><div class="price">¥500<span>/月</span> <span>年額 ¥3,000</span></div>
+        <ul><li>全履歴・統計（無制限）</li><li>P&amp;Lグラフ・RISK分析</li><li>詳細統計</li><li>AI向けハンドエクスポート</li></ul></div>
+    </div>
+    <table>
+      <thead><tr><th></th><th>無料</th><th>ANALYZER</th></tr></thead>
+      <tbody>
+        <tr><td>セッション記録</td><td>無制限</td><td class="y">無制限</td></tr>
+        <tr><td>セッション履歴表示</td><td>直近5件</td><td class="y">無制限</td></tr>
+        <tr><td>ハンド記録</td><td>無制限</td><td class="y">無制限</td></tr>
+        <tr><td>ハンド履歴表示</td><td>直近10件</td><td class="y">無制限</td></tr>
+        <tr><td>遠征記録</td><td>無制限</td><td class="y">無制限</td></tr>
+        <tr><td>遠征履歴表示</td><td>直近3件</td><td class="y">無制限</td></tr>
+        <tr><td>バンクロール管理</td><td>✓</td><td class="y">✓</td></tr>
+        <tr><td>バックアップ</td><td>✓</td><td class="y">✓</td></tr>
+        <tr><td>P&amp;Lグラフ・RISK分析</td><td>—</td><td class="y">✓</td></tr>
+        <tr><td>詳細統計</td><td>—</td><td class="y">✓</td></tr>
+        <tr><td>AI向けハンドエクスポート</td><td>—</td><td class="y">✓</td></tr>
+      </tbody>
+    </table>
+  </div></section>
+
+  <section id="contact" class="contact"><div class="section-inner">
+    <span class="eyebrow">CONTACT</span>
+    <h2 class="section-title">サポート・お問い合わせ</h2>
+    <p>ご不明な点やご意見は、以下のメールアドレスまでお気軽にご連絡ください。</p>
+    <a href="#">sug.development@gmail.com</a>
+  </div></section>
+</main>
+
+<footer><div class="footer"><p>© 2026 Pochive</p><nav><a href="#">プライバシーポリシー</a><a href="#">利用規約</a></nav></div></footer>
+
+<script>
+const VERT = `attribute vec2 p; void main(){ gl_Position = vec4(p,0.,1.); }`;
+const FRAG = `
+precision highp float;
+uniform vec2 uRes; uniform float uTime; uniform vec2 uLight; uniform float uHero;
+const vec3 GOLD = vec3(.79,.66,.30);
+float hash(vec2 p){ p = fract(p*vec2(123.34,456.21)); p += dot(p,p+45.32); return fract(p.x*p.y); }
+float noise(vec2 p){ vec2 i=floor(p), f=fract(p); f=f*f*(3.-2.*f);
+  return mix(mix(hash(i),hash(i+vec2(1,0)),f.x), mix(hash(i+vec2(0,1)),hash(i+vec2(1,1)),f.x), f.y); }
+float fbm(vec2 p){ float v=0., a=.5; for(int i=0;i<5;i++){ v+=a*noise(p); p*=2.03; a*=.5; } return v; }
+float sdHeart(vec2 p){ p.x=abs(p.x); p.y+=.5;
+  if(p.y+p.x>1.) return sqrt(dot(p-vec2(.25,.75),p-vec2(.25,.75)))-sqrt(2.)/4.;
+  return sqrt(min(dot(p-vec2(0,1),p-vec2(0,1)), dot(p-.5*max(p.x+p.y,0.),p-.5*max(p.x+p.y,0.))))*sign(p.x-p.y); }
+float sdBox(vec2 p, vec2 b){ vec2 d=abs(p)-b; return length(max(d,0.))+min(max(d.x,d.y),0.); }
+float suit(vec2 p, float k){
+  float stem = sdBox(p-vec2(0,-.55), vec2(.06,.25));
+  if(k<.25) return sdHeart(p*1.2)/1.2;
+  if(k<.5) return min(sdHeart(vec2(p.x,-p.y-.15)*1.3)/1.3, stem);
+  if(k<.75) return (abs(p.x)*1.3+abs(p.y)-.75)*.6;
+  float c = min(min(length(p-vec2(0,.32)), length(p-vec2(-.33,-.12))), length(p-vec2(.33,-.12)))-.3;
+  return min(c, stem);
+}
+uniform vec4 uF0; uniform vec4 uF1; uniform vec4 uF2; uniform vec4 uF3;
+// convert a feature uniform (device px centre, phone height, amount) into phone-local coords
+// sign of f.z says which side the text is on, so effects can reach toward it
+vec2 local(vec2 p, vec4 f){ vec2 c = (f.xy - .5*uRes)/uRes.y; vec2 q = (p - c)/(abs(f.z)/uRes.y); q.x *= sign(f.z); return q; }
+float line(float d, float w){ return smoothstep(w,0.,abs(d)); }
+float sdRoundBox(vec2 p, vec2 b, float r){ vec2 d=abs(p)-b+r; return length(max(d,0.))+min(max(d.x,d.y),0.)-r; }
+mat2 rot(float a){ float c=cos(a), s=sin(a); return mat2(c,-s,s,c); }
+
+// 01 Session: a clock dial around the phone, the elapsed-time arc sweeping round
+vec3 fxSession(vec2 q){
+  float r = length(q);
+  float a = fract(atan(q.x,q.y)/6.2831);
+  float prog = fract(uTime*.06);
+  float ring = line(r-.68, .004);
+  float tick = step(.985, fract(a*60.)) * step(.645,r) * step(r,.665);
+  float major = step(.993, fract(a*12.+.003)) * step(.61,r) * step(r,.665);
+  float arc = line(r-.72, .006) * step(a, prog);
+  float tail = line(r-.72, .03) * step(a, prog) * smoothstep(prog-.25, prog, a) * .4;
+  vec2 head = .72*vec2(sin(prog*6.2831), cos(prog*6.2831));
+  float dotH = exp(-length(q-head)*40.);
+  return GOLD * (ring*.35 + tick*.3 + major*.6 + arc*1.2 + tail + dotH*1.5);
+}
+// 02 Hand: five cards fanned behind the phone, dealt flop / turn / river
+vec3 fxHand(vec2 q){
+  vec3 col = vec3(0.);
+  float cyc = fract(uTime*.08) * 7.;
+  for(int i=0;i<5;i++){
+    float fi = float(i);
+    float ang = (fi-2.)*.32;
+    vec2 cq = rot(ang) * (q - vec2(0.,-.7)) - vec2(0.,1.02);
+    float d = sdRoundBox(cq, vec2(.2,.29), .03);
+    float shown = (fi<3.) ? step(1.,cyc) : step(fi, cyc - 0.);
+    shown *= step(cyc, 6.4);
+    float edge = line(d, .006);
+    float pip = smoothstep(.02,-.02, suit((cq-vec2(-.12,.19))*14., fract(fi*.27+.1))/14.);
+    col += GOLD * (edge*(.25 + .9*shown) + pip*shown*.9 + smoothstep(0.,-.02,d)*shown*.04);
+  }
+  return col;
+}
+// 03 Bankroll: a P&L line drawing itself from the phone out under the description
+float pnl(float x){ return -.5 + .38*(x+.2)/2.6 + .15*(fbm(vec2(x*2.2, 3.))-.5) + .04*sin(x*9.); }
+vec3 fxBankroll(vec2 q){
+  float x = q.x;
+  float y = pnl(x);
+  float prog = -.2 + 2.6*smoothstep(0.,.8,fract(uTime*.07));
+  float span = step(-.2,x) * smoothstep(2.4,1.9,x);
+  float on = span * step(x,prog);
+  float curve = line(q.y-y, .008) * on;
+  float fill = step(q.y,y) * smoothstep(-.65, y, q.y) * on * .12;
+  float grid = 0.;
+  for(int i=0;i<4;i++){ grid += line(q.y-(-.6+float(i)*.15), .002); }
+  grid *= span;
+  float head = exp(-length(q-vec2(prog, pnl(prog)))*35.) * step(prog,2.3);
+  return GOLD * (curve*1.3 + fill + grid*.12 + head*1.4);
+}
+// 04 Trip: a wireframe globe behind the phone and a dashed flight arc out toward the text
+vec3 fxTrip(vec2 q){
+  float R = .78;
+  vec2 g = q/R; float rr = dot(g,g);
+  float globe = 0.;
+  if(rr < 1.){
+    float lat = asin(g.y); float cl = cos(lat);
+    float lon = asin(clamp(g.x/cl, -1., 1.)) + uTime*.12;
+    globe += line(fract(lon/.5236+.5)-.5, .02);
+    globe += line(fract(lat/.3491+.5)-.5, .03);
+  }
+  globe = globe*.3 + line(sqrt(rr)-1., .006)*.5;
+  float u = (q.x-.35)/1.75;
+  float fy = .2 + .4*sin(3.1416*u);
+  float dfy = .4*3.1416/1.75*cos(3.1416*u);
+  float d = (q.y - fy)/sqrt(1.+dfy*dfy);
+  float inRange = step(0.,u) * step(u,1.);
+  float dash = step(.5, fract(u*24. - uTime*.8));
+  float arc = line(d, .006) * dash * inRange;
+  float pu = fract(uTime*.09);
+  float plane = exp(-length(q-vec2(.35+1.75*pu, .2+.4*sin(3.1416*pu)))*40.);
+  float pins = exp(-length(q-vec2(.35,.2))*45.) + exp(-length(q-vec2(2.1,.2))*45.);
+  return GOLD * (globe + arc*.9 + plane*1.6 + pins*1.2);
+}
+uniform vec2 uPhone;
+// card i: 0-1 hole cards, 2-6 board (flop, turn, river)
+vec2 cardPos(float i){ return i < 2. ? vec2(-.6 + i*.075, -.37) : vec2(-.42 + (i-2.)*.11, -.37); }
+float cardRot(float i){ return i < 1. ? .14 : (i < 2. ? -.08 : 0.); }
+float cardDealt(float i){ return i < 2. ? i*.3 : (i < 5. ? 1. + (i-2.)*.25 : (i < 6. ? 2.3 : 3.1)); }
+vec3 heroDeal(vec2 p, float light){
+  float T = mod(uTime, 11.);
+  float fadeAll = 1. - smoothstep(9.8, 10.8, T);
+  float beamX = mix(-.72, .2, smoothstep(4., 6.5, T));
+  float beamOn = smoothstep(3.6,4.,T) * (1. - smoothstep(6.5,7.,T));
+  vec2 ph = (uPhone - .5*uRes)/uRes.y;
+  vec3 col = vec3(0.);
+  for(int k=0;k<7;k++){
+    float i = float(k);
+    float td = cardDealt(i);
+    float a = smoothstep(td, td+.45, T);
+    if(a <= 0.) continue;
+    vec2 pos = cardPos(i) + vec2(0., (1.-a)*.12);
+    vec2 cq = rot(cardRot(i)*a) * (p - pos);
+    float d = sdRoundBox(cq, vec2(.045,.065), .008);
+    float kind = fract(i*.37 + .3);
+    float pd = suit(cq*24., kind)/24.;
+    // physical card in the site palette: dark green face, cream pip, muted edge, lit by the spotlight
+    float face = smoothstep(.002,-.002,d);
+    vec3 phys = mix(vec3(.075,.12,.09), vec3(.94,.9,.78), smoothstep(.002,-.002,pd)) * face * (.45 + 1.1*light);
+    phys += vec3(.54,.61,.56) * line(d,.0018) * (.35 + .6*light);
+    phys -= vec3(.03) * smoothstep(.03,.0,d) * (1.-face);
+    // recorded card: gold wireframe with scanlines
+    float wire = line(d,.0016)*1.3 + line(pd,.0016)*1.1 + face*line(fract(cq.y*90.)-.5,.12)*.18;
+    float scanned = step(p.x, beamX);
+    col += mix(phys, GOLD*wire, scanned) * a * fadeAll;
+    // data points rising from the recorded card into the phone
+    float tr = (beamX >= pos.x) ? T - mix(4., 6.5, (pos.x+.72)/.92) : -1.;
+    if(tr > 0.){
+      for(int j=0;j<6;j++){
+        float fj = float(j);
+        float s = fract(tr*.28 + fj/6.);
+        float on = step(fj/6., tr*.28);
+        vec2 q = mix(pos, ph + vec2(-.05 + .1*hash(vec2(i,fj)), -.1 + .2*hash(vec2(fj,i))), s*s*(3.-2.*s));
+        q.y += sin(s*3.1416)*(.12 + .08*hash(vec2(i+fj,3.)));
+        col += GOLD * exp(-length(p-q)*260.) * (1.-s) * on * 1.6 * fadeAll;
+      }
+    }
+  }
+  // the scanning beam
+  float band = smoothstep(-.52,-.46,p.y) * smoothstep(-.2,-.27,p.y);
+  col += GOLD * (exp(-abs(p.x-beamX)*400.)*1.4 + exp(-abs(p.x-beamX)*40.)*.15) * band * beamOn;
+  return col;
+}
+vec3 featureFx(vec2 p){
+  vec3 c = vec3(0.);
+  if(uF0.w > .001) c += fxSession(local(p,uF0)) * uF0.w;
+  if(uF1.w > .001) c += fxHand(local(p,uF1)) * uF1.w;
+  if(uF2.w > .001) c += fxBankroll(local(p,uF2)) * uF2.w;
+  if(uF3.w > .001) c += fxTrip(local(p,uF3)) * uF3.w;
+  return c;
+}
+void main(){
+  vec2 uv = gl_FragCoord.xy/uRes; vec2 p = (gl_FragCoord.xy - .5*uRes)/uRes.y;
+  vec2 lp = (uLight - .5*uRes)/uRes.y;
+  float hero = uHero;
+  // felt + spotlight
+  float grain = fbm(gl_FragCoord.xy*.35) * .5 + fbm(p*6.) * .5;
+  vec3 col = mix(vec3(.02,.06,.04), vec3(.05,.13,.08), grain);
+  float light = exp(-2.2*length((p-lp)*vec2(.8,1.1))) * (.9 + .1*sin(uTime*.7));
+  col *= .35 + 1.6*light;
+  // embossed suits (whole page)
+  vec2 tq = p*7.; vec2 ti = floor(tq); vec2 tf = fract(tq)-.5;
+  if(mod(ti.x+ti.y,2.)<1.) tf.y = -tf.y;
+  float ds = suit(tf*3.6, fract((mod(ti.x,4.))/4.+.01));
+  col += vec3(.05,.12,.08) * smoothstep(.03,-.03,ds) * light * .5;
+  col -= vec3(.01,.02,.015) * smoothstep(.05,.0,abs(ds)) * light;
+  // hero: a hand is dealt, scanned and recorded into the app
+  col += heroDeal(p, light) * hero;
+  // suit nodes: sparse and only under the light, outside the hero
+  vec2 g = p*14.; vec2 gi = floor(g); vec2 gf = fract(g)-.5;
+  float h = hash(gi);
+  float phase = fract(uTime*.18 + h*7.);
+  float life = smoothstep(0.,.15,phase) * smoothstep(.5,.2,phase) * step(.9, h) * clamp(light*1.2,0.,1.) * (1.-hero);
+  float d = suit(gf*3.2, fract(h*13.7));
+  col += GOLD * (smoothstep(.05,.0,abs(d))*1.1 + smoothstep(.03,-.03,d)*.35) * life * (.6 + .8*light) * .5;
+  col += featureFx(p);
+  col *= smoothstep(1.4,.2,length(uv-.5)*1.6);
+  gl_FragColor = vec4(col,1.);
+}`;
+
+const cv = document.getElementById('bg');
+const gl = cv.getContext('webgl', {antialias:false});
+const nav = document.getElementById('nav');
+addEventListener('scroll', () => nav.classList.toggle('scrolled', scrollY > 50), {passive:true});
+if(gl){
+  const mk = (t,s) => { const sh = gl.createShader(t); gl.shaderSource(sh,s); gl.compileShader(sh);
+    if(!gl.getShaderParameter(sh, gl.COMPILE_STATUS)) console.error(gl.getShaderInfoLog(sh)); return sh; };
+  const pr = gl.createProgram(); gl.attachShader(pr, mk(gl.VERTEX_SHADER, VERT)); gl.attachShader(pr, mk(gl.FRAGMENT_SHADER, FRAG));
+  gl.linkProgram(pr); gl.useProgram(pr);
+  gl.bindBuffer(gl.ARRAY_BUFFER, gl.createBuffer());
+  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1,-1,3,-1,-1,3]), gl.STATIC_DRAW);
+  const loc = gl.getAttribLocation(pr,'p'); gl.enableVertexAttribArray(loc); gl.vertexAttribPointer(loc,2,gl.FLOAT,false,0,0);
+  const U = n => gl.getUniformLocation(pr,n);
+  const uRes=U('uRes'), uTime=U('uTime'), uLight=U('uLight'), uHero=U('uHero');
+  const uF=[U('uF0'),U('uF1'),U('uF2'),U('uF3')], uPhone=U('uPhone');
+  const dpr = Math.min(devicePixelRatio, 1.5);
+  const resize = () => { cv.width = innerWidth*dpr; cv.height = innerHeight*dpr; gl.viewport(0,0,cv.width,cv.height); };
+  resize(); addEventListener('resize', resize);
+  let mouse = null, lightPos = [innerWidth*.7, innerHeight*.45];
+  addEventListener('mousemove', e => mouse = [e.clientX, e.clientY]);
+  const spots = [...document.querySelectorAll('[data-spot]')];
+  const t0 = performance.now();
+  const frame = () => {
+    // target: phone nearest to viewport centre (outside hero), else mouse
+    let target = mouse || [innerWidth*.7, innerHeight*.45];
+    if(scrollY > innerHeight*.5){
+      let best = null, bd = innerHeight*.4;
+      for(const el of spots){ const r = el.getBoundingClientRect(); const cy = r.top + r.height/2;
+        const dd = Math.abs(cy - innerHeight/2); if(dd < bd){ bd = dd; best = [r.left + r.width/2, cy]; } }
+      if(best) target = best;
+    }
+    lightPos[0] += (target[0]-lightPos[0])*.05; lightPos[1] += (target[1]-lightPos[1])*.05;
+    const hero = 1 - Math.min(1, Math.max(0, scrollY/(innerHeight*.8)));
+    gl.uniform2f(uRes, cv.width, cv.height);
+    gl.uniform1f(uTime, (performance.now()-t0)/1000);
+    gl.uniform2f(uLight, lightPos[0]*dpr, (innerHeight-lightPos[1])*dpr);
+    gl.uniform1f(uHero, hero*hero*(3-2*hero));
+    { const r = spots[0].getBoundingClientRect(); gl.uniform2f(uPhone, (r.left + r.width/2)*dpr, (innerHeight - r.top - r.height/2)*dpr); }
+    // feature effects follow their phone and fade in as it nears the viewport centre
+    spots.slice(1).forEach((el, i) => { const r = el.getBoundingClientRect(); const cy = r.top + r.height/2;
+      let amt = 1 - Math.min(1, Math.abs(cy - innerHeight/2)/(innerHeight*.55)); amt = amt*amt*(3-2*amt);
+      const side = (r.left + r.width/2) < innerWidth/2 ? 1 : -1;
+      gl.uniform4f(uF[i], (r.left + r.width/2)*dpr, (innerHeight-cy)*dpr, r.height*dpr*side, amt); });
+    gl.drawArrays(gl.TRIANGLES, 0, 3);
+    requestAnimationFrame(frame);
+  };
+  frame();
+}
+</script>
+</body>
+</html>

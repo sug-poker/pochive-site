@@ -61,6 +61,7 @@ export default function PricingSection() {
   return (
     <section id="pricing" className="pricing">
       <div className="section-inner">
+        <span className="eyebrow">PRICING</span>
         <h2 className="section-title">料金プラン</h2>
         <div className="pricing-cards">
           <PlanCard tier="free" />
