@@ -1,0 +1,26 @@
+import { describe, expect, it } from 'vitest'
+import { buildFragmentSource, VERTEX_SOURCE } from './shaderSource'
+
+describe('buildFragmentSource', () => {
+  const src = buildFragmentSource({ fbmOctaves: 3 })
+  it('starts with a single precision line followed by the octave define', () => {
+    expect(src.startsWith('precision highp float;\n#define FBM_OCTAVES 3\n')).toBe(true)
+    expect(src.match(/precision /g)).toHaveLength(1)
+  })
+  it('includes every part exactly once', () => {
+    for (const fn of ['float fbm(', 'vec3 heroDeal(', 'vec3 featureFx(', 'void main(']) {
+      expect(src.split(fn)).toHaveLength(2)
+    }
+  })
+  it('declares the uniform contract', () => {
+    for (const u of ['uRes', 'uTime', 'uLight', 'uHero', 'uPhone', 'uCards', 'uStacked', 'uF0', 'uF1', 'uF2', 'uF3', 'uFSide']) {
+      expect(src).toMatch(new RegExp(`uniform \\w+ ${u};`))
+    }
+  })
+  it('never draws grid pulses, chips or the table oval', () => {
+    expect(src).not.toMatch(/pulseX|chip\(|rail/)
+  })
+  it('vertex shader passes the full-screen triangle through', () => {
+    expect(VERTEX_SOURCE).toContain('gl_Position')
+  })
+})
