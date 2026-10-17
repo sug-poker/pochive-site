@@ -32,7 +32,7 @@ export default function FeaturesSection() {
             className={`feature-row${i % 2 === 1 ? ' feature-row--reverse' : ''}`}
           >
             <div className="feature-row-phone">
-              <div className="iphone-frame-md">
+              <div className="iphone-frame-md" data-shader-anchor="feature">
                 <img
                   src={f.img}
                   alt={`Pochive ${f.title}画面`}

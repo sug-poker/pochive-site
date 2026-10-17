@@ -1,3 +1,4 @@
+import ShaderBackground from '../components/ShaderBackground'
 import Nav from '../components/Nav'
 import HeroSection from '../components/HeroSection'
 import FeaturesSection from '../components/FeaturesSection'
@@ -8,6 +9,7 @@ import Footer from '../components/Footer'
 export default function Home() {
   return (
     <>
+      <ShaderBackground />
       <Nav />
       <main>
         <HeroSection />

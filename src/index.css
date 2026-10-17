@@ -14,7 +14,8 @@
 }
 
 body {
-  background-color: var(--bg);
+  /* Felt shown without WebGL and before the shader's first frame. */
+  background: radial-gradient(ellipse at 70% 35%, #12261a 0%, var(--bg) 65%) fixed, var(--bg);
   color: var(--text);
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   min-height: 100vh;
@@ -23,6 +24,28 @@ body {
 a {
   color: inherit;
   text-decoration: none;
+}
+
+/* ── Shader background ── */
+
+.shader-bg {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  pointer-events: none;
+  display: block;
+}
+
+.no-webgl .shader-bg {
+  display: none;
+}
+
+main,
+footer {
+  position: relative;
+  z-index: 1;
 }
 
 /* ── Shared ── */
@@ -213,6 +236,12 @@ a {
   opacity: 0.85;
 }
 
+/* Space under the CTA where the shader deals the hero cards. */
+.hero-cards {
+  align-self: stretch;
+  height: 120px;
+}
+
 @media (max-width: 768px) {
   .hero {
     flex-direction: column-reverse;
@@ -244,6 +273,10 @@ a {
 
   .btn-appstore {
     align-self: center;
+  }
+
+  .hero-cards {
+    height: 90px;
   }
 }
 

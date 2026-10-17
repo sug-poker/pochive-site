@@ -16,8 +16,9 @@ export default function HeroSection() {
           <a href="https://apps.apple.com/jp/app/pochive/id6809109645" className="btn-appstore">
             App Store でダウンロード
           </a>
+          <div className="hero-cards" data-shader-anchor="hero-cards" aria-hidden="true" />
         </div>
-        <div className="iphone-frame">
+        <div className="iphone-frame" data-shader-anchor="hero-phone">
           <img src="/screenshots/home.png" alt="Pochive ホーム画面" className="iphone-screen" />
         </div>
       </div>
