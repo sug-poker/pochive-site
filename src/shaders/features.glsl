@@ -6,6 +6,15 @@ vec2 local(vec2 p, vec4 f, float side){
   return q;
 }
 
+// Stacked (mobile) layout: there is no room beside the phone, so a wide effect is fitted
+// across 90% of the viewport in a band whose top lands at phone-local y = top, keeping its
+// aspect ratio. [a, b] is the effect's x domain and yTop the top of its y range.
+vec2 fitBand(vec2 q, vec4 f, float a, float b, float yTop, float top){
+  float w = uRes.x/f.z;
+  float s = (b - a)/(.9*w);
+  return vec2(a + (q.x + .45*w)*s, yTop + (q.y - top)*s);
+}
+
 // 01 Session: a clock dial around the phone, the elapsed-time arc sweeping round
 vec3 fxSession(vec2 q){
   float r = length(q);
@@ -54,7 +63,7 @@ vec3 fxBankroll(vec2 q){
   return GOLD * (curve*1.3 + fill + grid*.12 + head*1.4);
 }
 // 04 Trip: a wireframe globe behind the phone and a dashed flight arc out toward the text
-vec3 fxTrip(vec2 q){
+vec3 fxGlobe(vec2 q){
   float R = .78;
   vec2 g = q/R; float rr = dot(g,g);
   float globe = 0.;
@@ -64,7 +73,9 @@ vec3 fxTrip(vec2 q){
     globe += line(fract(lon/.5236+.5)-.5, .02);
     globe += line(fract(lat/.3491+.5)-.5, .03);
   }
-  globe = globe*.3 + line(sqrt(rr)-1., .006)*.5;
+  return GOLD * (globe*.3 + line(sqrt(rr)-1., .006)*.5);
+}
+vec3 fxRoute(vec2 q){
   float u = (q.x-.35)/1.75;
   float fy = .2 + .4*sin(3.1416*u);
   float dfy = .4*3.1416/1.75*cos(3.1416*u);
@@ -75,14 +86,22 @@ vec3 fxTrip(vec2 q){
   float pu = fract(uTime*.09);
   float plane = exp(-length(q-vec2(.35+1.75*pu, .2+.4*sin(3.1416*pu)))*40.);
   float pins = exp(-length(q-vec2(.35,.2))*45.) + exp(-length(q-vec2(2.1,.2))*45.);
-  return GOLD * (globe + arc*.9 + plane*1.6 + pins*1.2);
+  return GOLD * (arc*.9 + plane*1.6 + pins*1.2);
 }
 
 vec3 featureFx(vec2 p){
   vec3 c = vec3(0.);
-  if(uF0.w > .001) c += fxSession(local(p,uF0,uFSide.x)) * uF0.w;
+  bool stacked = uStacked > .5;
+  // stacked: shrink the dial so its ring hugs the phone instead of crossing the heading below
+  if(uF0.w > .001) c += fxSession(local(p,uF0,uFSide.x) * (stacked ? 1.38 : 1.)) * uF0.w;
   if(uF1.w > .001) c += fxHand(local(p,uF1,uFSide.y)) * uF1.w;
-  if(uF2.w > .001) c += fxBankroll(local(p,uF2,uFSide.z)) * uF2.w;
-  if(uF3.w > .001) c += fxTrip(local(p,uF3,uFSide.w)) * uF3.w;
+  if(uF2.w > .001){
+    vec2 q = local(p,uF2,uFSide.z);
+    c += fxBankroll(stacked ? fitBand(q, uF2, -.2, 2.4, -.05, -.15) : q) * uF2.w;
+  }
+  if(uF3.w > .001){
+    vec2 q = local(p,uF3,uFSide.w);
+    c += (fxGlobe(q) + fxRoute(stacked ? fitBand(q, uF3, .35, 2.1, .6, -.35) : q)) * uF3.w;
+  }
   return c;
 }

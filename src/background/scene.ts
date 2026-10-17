@@ -19,9 +19,11 @@ export const REDUCED_MOTION_TIME = 8.0
 const clamp01 = (x: number) => Math.min(1, Math.max(0, x))
 const smoothstep = (t: number) => t * t * (3 - 2 * t)
 
-// Strength of the hero effect: 1 at the top, gone after 80% of a viewport of scrolling.
-export function heroFade(scrollY: number, viewportHeight: number): number {
-  return smoothstep(1 - clamp01(scrollY / (viewportHeight * 0.8)))
+// Strength of the hero effect from where the hero section ends on screen: full while
+// its bottom is below 70% of the viewport height, gone once within 20% of the top
+// (a one-viewport desktop hero is gone after 80% of a viewport of scrolling).
+export function heroFade(heroBottom: number, viewportHeight: number): number {
+  return smoothstep(clamp01((heroBottom - viewportHeight * 0.2) / (viewportHeight * 0.5)))
 }
 
 // Strength of a feature effect: 1 when its phone sits at the viewport centre.

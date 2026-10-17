@@ -39,6 +39,7 @@ export default function ShaderBackground() {
     const ratio = settings.pixelRatio
     const heroPhoneEl = document.querySelector('[data-shader-anchor="hero-phone"]')
     const heroCardsEl = document.querySelector('[data-shader-anchor="hero-cards"]')
+    const heroSection = document.getElementById('hero')
     const featureEls = [...document.querySelectorAll('[data-shader-anchor="feature"]')]
     // Device pixels, y up, as the shader expects.
     const toDevice = ([x, y]: Point): [number, number] => [x * ratio, (window.innerHeight - y) * ratio]
@@ -74,7 +75,7 @@ export default function ShaderBackground() {
         res: [canvas.width, canvas.height],
         time: settings.animate ? (now - t0) / 1000 : REDUCED_MOTION_TIME,
         light: toDevice(light),
-        hero: heroFade(window.scrollY, vh),
+        hero: heroSection ? heroFade(heroSection.getBoundingClientRect().bottom, vh) : 0,
         phone: toDevice(heroPhone ?? [vw / 2, vh / 2]),
         cards: [cardsX, cardsY, cards.unit * ratio],
         stacked: stacked ? 1 : 0,

@@ -2,14 +2,21 @@ import { describe, expect, it } from 'vitest'
 import { CARD_SCENE_WIDTH, cardSceneRect, featureAmount, heroFade, lightTarget, renderSettings, textSide } from './scene'
 
 describe('heroFade', () => {
-  it('is 1 at the top and 0 after 80% of a viewport', () => {
-    expect(heroFade(0, 1000)).toBe(1)
-    expect(heroFade(800, 1000)).toBe(0)
-    expect(heroFade(5000, 1000)).toBe(0)
+  it('is 1 while the hero still fills most of the viewport', () => {
+    expect(heroFade(1000, 1000)).toBe(1)
+    expect(heroFade(700, 1000)).toBe(1)
   })
-  it('eases with smoothstep', () => {
-    expect(heroFade(400, 1000)).toBeCloseTo(0.5)
-    expect(heroFade(200, 1000)).toBeCloseTo(0.84375)
+  it('is 0 once the hero bottom is within 20% of the viewport top (desktop: 80% scrolled)', () => {
+    expect(heroFade(200, 1000)).toBe(0)
+    expect(heroFade(-500, 1000)).toBe(0)
+  })
+  it('eases with smoothstep in between', () => {
+    expect(heroFade(450, 1000)).toBeCloseTo(0.5)
+    expect(heroFade(325, 1000)).toBeCloseTo(0.15625)
+  })
+  it('keeps the effect up on a tall stacked hero while its cards are on screen', () => {
+    // Mobile hero ~1.6 viewports tall, scrolled so the card scene sits mid-screen.
+    expect(heroFade(0.64 * 844, 844)).toBeGreaterThan(0.9)
   })
 })
 
