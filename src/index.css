@@ -53,15 +53,26 @@ footer {
 .section-inner {
   max-width: 1100px;
   margin: 0 auto;
-  padding: 96px 24px;
+  padding: 120px 24px;
 }
 
 .section-title {
   font-size: 32px;
   font-weight: 800;
   color: var(--text);
-  margin-bottom: 48px;
+  margin-bottom: 56px;
   text-align: center;
+}
+
+.eyebrow {
+  display: block;
+  text-align: center;
+  color: var(--gold);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 4px;
+  margin-bottom: 12px;
+  opacity: 0.85;
 }
 
 .badge {
@@ -80,35 +91,19 @@ footer {
 /* ── iPhone mockup ── */
 
 .iphone-frame {
-  width: 340px;
-  height: 680px;
-  border: 2px solid var(--border);
-  border-radius: 48px;
-  background: var(--surface);
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  border: 1px solid rgba(201, 168, 76, 0.28);
+  background: rgba(8, 12, 10, 0.8);
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.6), 0 0 60px rgba(201, 168, 76, 0.08);
   flex-shrink: 0;
-  position: relative;
-  box-shadow: 0 32px 80px rgba(0, 0, 0, 0.6);
-}
-
-.iphone-frame::before {
-  content: '';
-  position: absolute;
-  top: 18px;
-  width: 90px;
-  height: 10px;
-  background: var(--border);
-  border-radius: 5px;
+  padding: 14px;
+  border-radius: 48px;
 }
 
 .iphone-screen {
-  width: 290px;
-  height: 590px;
-  background: var(--bg);
-  border-radius: 38px;
-  object-fit: cover;
+  display: block;
+  width: 300px;
+  height: auto;
+  border-radius: 36px;
 }
 
 /* ── Nav ── */
@@ -127,8 +122,9 @@ footer {
 }
 
 .nav--scrolled {
-  background: rgba(10, 15, 13, 0.85);
-  backdrop-filter: blur(12px);
+  background: rgba(8, 13, 10, 0.6);
+  backdrop-filter: blur(14px);
+  border-bottom: 1px solid rgba(201, 168, 76, 0.12);
 }
 
 .nav-logo {
@@ -229,6 +225,7 @@ footer {
   padding: 14px 28px;
   border-radius: 12px;
   align-self: flex-start;
+  box-shadow: 0 0 30px rgba(201, 168, 76, 0.25);
   transition: opacity 0.15s;
 }
 
@@ -278,44 +275,28 @@ footer {
   .hero-cards {
     height: 90px;
   }
+
+  .iphone-screen {
+    width: 240px;
+  }
 }
 
 /* ── Features ── */
 
 .iphone-frame-md {
-  width: 260px;
-  height: 520px;
-  border: 2px solid var(--border);
-  border-radius: 40px;
-  background: var(--surface);
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  border: 1px solid rgba(201, 168, 76, 0.28);
+  background: rgba(8, 12, 10, 0.8);
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.6), 0 0 60px rgba(201, 168, 76, 0.08);
   flex-shrink: 0;
-  position: relative;
-  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.5);
-}
-
-.iphone-frame-md::before {
-  content: '';
-  position: absolute;
-  top: 16px;
-  width: 70px;
-  height: 8px;
-  background: var(--border);
-  border-radius: 4px;
+  padding: 12px;
+  border-radius: 40px;
 }
 
 .iphone-screen-md {
+  display: block;
   width: 220px;
-  height: 450px;
-  background: var(--bg);
+  height: auto;
   border-radius: 30px;
-  object-fit: cover;
-}
-
-.features {
-  background: var(--surface);
 }
 
 .feature-row {
@@ -323,7 +304,7 @@ footer {
   align-items: center;
   gap: 80px;
   padding: 64px 0;
-  border-bottom: 1px solid var(--border);
+  border-bottom: 1px solid rgba(201, 168, 76, 0.1);
 }
 
 .feature-row:last-child {
@@ -343,6 +324,14 @@ footer {
   display: flex;
   flex-direction: column;
   gap: 16px;
+}
+
+.feature-num {
+  font-family: ui-monospace, Menlo, monospace;
+  color: var(--gold);
+  font-size: 13px;
+  letter-spacing: 2px;
+  opacity: 0.8;
 }
 
 .feature-row-body h3 {
@@ -365,15 +354,8 @@ footer {
     padding: 48px 0;
   }
 
-  .iphone-frame-md {
-    width: 220px;
-    height: 440px;
-    border-radius: 36px;
-  }
-
   .iphone-screen-md {
     width: 184px;
-    height: 374px;
     border-radius: 26px;
   }
 }
@@ -388,9 +370,10 @@ footer {
 }
 
 .pricing-card {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 16px;
+  background: rgba(10, 18, 13, 0.55);
+  backdrop-filter: blur(16px);
+  border: 1px solid rgba(201, 168, 76, 0.15);
+  border-radius: 18px;
   padding: 32px;
   display: flex;
   flex-direction: column;
@@ -399,6 +382,7 @@ footer {
 
 .pricing-card--highlight {
   border-color: var(--gold);
+  box-shadow: 0 0 0 1px rgba(201, 168, 76, 0.4), 0 0 60px rgba(201, 168, 76, 0.12);
 }
 
 .pricing-card-header {
@@ -452,8 +436,9 @@ footer {
 }
 
 .pricing-card li::before {
-  content: '✓';
+  content: '♠';
   color: var(--gold);
+  font-size: 11px;
   font-weight: 700;
   flex-shrink: 0;
 }
@@ -462,13 +447,18 @@ footer {
   width: 100%;
   border-collapse: collapse;
   font-size: 14px;
+  background: rgba(10, 18, 13, 0.55);
+  backdrop-filter: blur(16px);
+  border: 1px solid rgba(201, 168, 76, 0.15);
+  border-radius: 18px;
+  overflow: hidden;
 }
 
 .pricing-table th,
 .pricing-table td {
   padding: 12px 16px;
   text-align: center;
-  border-bottom: 1px solid var(--border);
+  border-bottom: 1px solid rgba(201, 168, 76, 0.08);
 }
 
 .pricing-table th:first-child,
@@ -499,7 +489,6 @@ footer {
 /* ── Contact ── */
 
 .contact {
-  background: var(--surface);
   text-align: center;
 }
 
@@ -534,6 +523,7 @@ footer {
   padding: 32px 24px;
   font-size: 13px;
   color: var(--muted);
+  border-top: 1px solid rgba(201, 168, 76, 0.1);
 }
 
 .footer-links {

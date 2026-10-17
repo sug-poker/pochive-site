@@ -1,21 +1,25 @@
 const FEATURES = [
   {
     title: 'セッション記録',
+    label: 'SESSION',
     desc: 'キャッシュゲーム・トーナメントのセッションを無制限に記録・管理。入退店時刻・損益を追跡。',
     img: '/screenshots/records.png',
   },
   {
     title: 'ハンド記録',
+    label: 'HAND',
     desc: 'プレイしたハンドをホールカード・ボード・アクションまで詳細に記録。タグやレビューポイントで後から振り返りやすく。',
     img: '/screenshots/hands.png',
   },
   {
     title: 'バンクロール・統計',
+    label: 'BANKROLL',
     desc: '現在残高・推奨 Buy-in・ストップロスを自動計算し、入出金履歴で資金を管理。残高推移グラフ・ドローダウン・ROI・勝率・時給などの詳細統計で実力を数値化（Analyzer プラン）。',
     img: '/screenshots/bankroll.png',
   },
   {
     title: '遠征管理',
+    label: 'TRIP',
     desc: '海外・国内遠征ごとにセッションをまとめて管理。航空券・ホテル・食事などの経費も含めた遠征収支や勝率・時給を一目で把握。',
     img: '/screenshots/trip.png',
   },
@@ -25,6 +29,7 @@ export default function FeaturesSection() {
   return (
     <section id="features" className="features">
       <div className="section-inner">
+        <span className="eyebrow">FEATURES</span>
         <h2 className="section-title">機能</h2>
         {FEATURES.map((f, i) => (
           <div
@@ -43,6 +48,7 @@ export default function FeaturesSection() {
               </div>
             </div>
             <div className="feature-row-body">
+              <span className="feature-num">{`0${i + 1} / ${f.label}`}</span>
               <h3>{f.title}</h3>
               <p>{f.desc}</p>
             </div>
