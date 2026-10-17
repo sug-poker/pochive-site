@@ -58,7 +58,9 @@ export function lightTarget(input: {
     }
     if (best) return best
   }
-  return mouse ?? heroPhone ?? [viewport.width * 0.7, viewport.height * 0.45]
+  // The hero phone is only a useful default while it is on screen.
+  const heroOnScreen = heroPhone && heroPhone[1] >= 0 && heroPhone[1] <= viewport.height ? heroPhone : null
+  return mouse ?? heroOnScreen ?? [viewport.width * 0.7, viewport.height * 0.45]
 }
 
 export function cardSceneRect(anchor: Rect, centered: boolean): { left: number; centerY: number; unit: number } {

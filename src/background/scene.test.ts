@@ -47,6 +47,9 @@ describe('lightTarget', () => {
   it('falls back to 70% / 45% of the viewport with neither', () => {
     expect(lightTarget({ scrollY: 0, viewport, mouse: null, heroPhone: null, featurePhones: [] })).toEqual([896, 405])
   })
+  it('ignores the hero phone once it has scrolled off screen (touch, past the hero)', () => {
+    expect(lightTarget({ scrollY: 3000, viewport, mouse: null, heroPhone: [1000, -2500], featurePhones: [] })).toEqual([896, 405])
+  })
   it('locks onto the feature phone nearest the centre once past half a viewport', () => {
     const featurePhones: Array<[number, number]> = [[300, 100], [900, 480]]
     expect(lightTarget({ scrollY: 2000, viewport, mouse: [5, 5], heroPhone: null, featurePhones })).toEqual([900, 480])
