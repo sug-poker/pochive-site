@@ -9,8 +9,7 @@ export type Uniforms = {
   time: number
   light: Vec2
   hero: number
-  phone: Vec2
-  table: [number, number, number]
+  phone: [number, number, number]
   stacked: number
   features: Vec4[]
   featureSides: Vec4
@@ -22,7 +21,7 @@ export interface Renderer {
   dispose(): void
 }
 
-const UNIFORM_NAMES = ['uRes', 'uTime', 'uLight', 'uHero', 'uPhone', 'uTable', 'uStacked', 'uF0', 'uF1', 'uF2', 'uF3', 'uFSide'] as const
+const UNIFORM_NAMES = ['uRes', 'uTime', 'uLight', 'uHero', 'uPhone', 'uStacked', 'uF0', 'uF1', 'uF2', 'uF3', 'uFSide'] as const
 const NO_FEATURE: Vec4 = [0, 0, 1, 0]
 
 function compile(gl: WebGLRenderingContext, type: number, source: string): WebGLShader | null {
@@ -82,8 +81,7 @@ export function createRenderer(canvas: HTMLCanvasElement, fragmentSource: string
       gl.uniform1f(loc.uTime, u.time)
       gl.uniform2f(loc.uLight, ...u.light)
       gl.uniform1f(loc.uHero, u.hero)
-      gl.uniform2f(loc.uPhone, ...u.phone)
-      gl.uniform3f(loc.uTable, ...u.table)
+      gl.uniform3f(loc.uPhone, ...u.phone)
       gl.uniform1f(loc.uStacked, u.stacked)
       gl.uniform4f(loc.uF0, ...(u.features[0] ?? NO_FEATURE))
       gl.uniform4f(loc.uF1, ...(u.features[1] ?? NO_FEATURE))

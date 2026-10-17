@@ -3,8 +3,7 @@ uniform vec2 uRes;
 uniform float uTime;
 uniform vec2 uLight;
 uniform float uHero;
-uniform vec2 uPhone;
-uniform vec3 uTable;
+uniform vec3 uPhone;   // hero phone: centre (device px, y up) and height
 uniform float uStacked;
 uniform vec4 uF0;
 uniform vec4 uF1;

@@ -10,12 +10,11 @@ describe('prerender output', () => {
     expect(html.match(/data-shader-anchor="hero-phone"/g)).toHaveLength(1)
     expect(html.match(/data-shader-anchor="feature"/g)).toHaveLength(4)
   })
-  it('renders the hero table scene with six seat labels and both phone screenshots', () => {
-    expect(html.match(/data-shader-anchor="hero-table"/g)).toHaveLength(1)
-    for (const seat of ['BTN', 'SB', 'BB', 'UTG', 'HJ', 'CO']) expect(html).toContain(`>${seat}</span>`)
-    expect(html).toContain('/screenshots/hands.png')
-    expect(html).toContain('/screenshots/bankroll.png')
-    expect(html).toMatch(/data-shader-anchor="hero-phone"[^>]*data-screen="hands"|data-screen="hands"[^>]*data-shader-anchor="hero-phone"/)
+  it('shows a single hand-log screenshot in the hero phone, with no table scene or seat labels', () => {
+    const hero = html.slice(html.indexOf('<section id="hero">'), html.indexOf('</section>'))
+    expect(hero.match(/<img /g)).toHaveLength(1)
+    expect(hero).toContain('/screenshots/hands.png')
+    expect(hero).not.toMatch(/hero-table|hero-seat/)
   })
   it('adds the eyebrow labels and feature numbers', () => {
     for (const label of ['FEATURES', 'PRICING', 'CONTACT']) {

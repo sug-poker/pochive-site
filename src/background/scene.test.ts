@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { REDUCED_MOTION_TIME, featureAmount, heroFade, heroPhoneState, lightTarget, renderSettings, tableSceneRect, textSide } from './scene'
+import { REDUCED_MOTION_TIME, featureAmount, heroFade, heroPhonePing, lightTarget, renderSettings, textSide } from './scene'
 
 describe('heroFade', () => {
   it('is 1 while the hero still fills most of the viewport', () => {
@@ -59,36 +59,17 @@ describe('lightTarget', () => {
   })
 })
 
-describe('tableSceneRect', () => {
-  it('centres the scene in the anchor and uses its height as the unit', () => {
-    expect(tableSceneRect({ left: 100, top: 600, width: 460, height: 200 })).toEqual({ centerX: 330, centerY: 700, unit: 200 })
+describe('heroPhonePing', () => {
+  it('flashes for 0.22s each time a light drops into the phone (every 3.2s, landing at 55% of the cycle)', () => {
+    expect(heroPhonePing(1.77)).toBe(true)
+    expect(heroPhonePing(1.75)).toBe(false)
+    expect(heroPhonePing(1.97)).toBe(true)
+    expect(heroPhonePing(1.99)).toBe(false)
+    expect(heroPhonePing(3.2 * 4 + 1.8)).toBe(true)
+    expect(heroPhonePing(0.5)).toBe(false)
   })
-  it('shrinks the unit when the anchor is narrower than 2.3:1', () => {
-    expect(tableSceneRect({ left: 0, top: 0, width: 230, height: 200 }).unit).toBeCloseTo(100)
-  })
-})
-
-describe('heroPhoneState', () => {
-  it('shows the hand log during the hand and the bankroll after the pot lands', () => {
-    expect(heroPhoneState(5).screen).toBe('hands')
-    expect(heroPhoneState(14.6).screen).toBe('bankroll')
-    expect(heroPhoneState(16.79).screen).toBe('bankroll')
-    expect(heroPhoneState(16.8).screen).toBe('hands')
-  })
-  it('wraps every 17 seconds back to the hand log', () => {
-    expect(heroPhoneState(17 + 5).screen).toBe('hands')
-    expect(heroPhoneState(17 + 15).screen).toBe('bankroll')
-  })
-  it('pings for 0.22s when a packet lands: actions +1.0s, streets and showdown +1.2s, the pot at 14.7s', () => {
-    expect(heroPhoneState(2.0).ping).toBe(true) // BTN raise at 1.0
-    expect(heroPhoneState(2.25).ping).toBe(false)
-    expect(heroPhoneState(4.65).ping).toBe(true) // flop at 3.4
-    expect(heroPhoneState(14.4).ping).toBe(true) // showdown at 13.2
-    expect(heroPhoneState(14.75).ping).toBe(true) // pot
-    expect(heroPhoneState(0.5).ping).toBe(false)
-  })
-  it('the reduced-motion still shows the bankroll without a ping', () => {
-    expect(heroPhoneState(REDUCED_MOTION_TIME)).toEqual({ screen: 'bankroll', ping: false })
+  it('does not flash in the reduced-motion still', () => {
+    expect(heroPhonePing(REDUCED_MOTION_TIME)).toBe(false)
   })
 })
 

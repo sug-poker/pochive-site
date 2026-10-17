@@ -3,10 +3,9 @@ import {
   REDUCED_MOTION_TIME,
   featureAmount,
   heroFade,
-  heroPhoneState,
+  heroPhonePing,
   lightTarget,
   renderSettings,
-  tableSceneRect,
   textSide,
   type Point,
 } from '../background/scene'
@@ -40,7 +39,6 @@ export default function ShaderBackground() {
 
     const ratio = settings.pixelRatio
     const heroPhoneEl = document.querySelector<HTMLElement>('[data-shader-anchor="hero-phone"]')
-    const heroTableEl = document.querySelector('[data-shader-anchor="hero-table"]')
     const heroSection = document.getElementById('hero')
     const featureEls = [...document.querySelectorAll('[data-shader-anchor="feature"]')]
     // Device pixels, y up, as the shader expects.
@@ -57,7 +55,8 @@ export default function ShaderBackground() {
       const vw = window.innerWidth
       const vh = window.innerHeight
       const stacked = narrow.matches
-      const heroPhone = heroPhoneEl ? center(heroPhoneEl.getBoundingClientRect()) : null
+      const heroPhoneRect = heroPhoneEl?.getBoundingClientRect()
+      const heroPhone = heroPhoneRect ? center(heroPhoneRect) : null
       const featureRects = featureEls.map((el) => el.getBoundingClientRect())
       const featurePhones = featureRects.map(center)
 
@@ -67,10 +66,6 @@ export default function ShaderBackground() {
         ? [light[0] + (target[0] - light[0]) * 0.05, light[1] + (target[1] - light[1]) * 0.05]
         : target
 
-      const table = heroTableEl
-        ? tableSceneRect(heroTableEl.getBoundingClientRect())
-        : { centerX: 0, centerY: 0, unit: 1 }
-      const [tableX, tableY] = toDevice([table.centerX, table.centerY])
       const time = settings.animate ? (now - t0) / 1000 : REDUCED_MOTION_TIME
       const sides = featurePhones.map((c) => textSide(c[0], vw, stacked))
 
@@ -79,8 +74,7 @@ export default function ShaderBackground() {
         time,
         light: toDevice(light),
         hero: heroSection ? heroFade(heroSection.getBoundingClientRect().bottom, vh) : 0,
-        phone: toDevice(heroPhone ?? [vw / 2, vh / 2]),
-        table: [tableX, tableY, table.unit * ratio],
+        phone: [...toDevice(heroPhone ?? [vw / 2, vh / 2]), (heroPhoneRect?.height ?? 1) * ratio],
         stacked: stacked ? 1 : 0,
         features: featureRects.map((r, i) => {
           const [x, y] = toDevice(featurePhones[i])
@@ -90,8 +84,8 @@ export default function ShaderBackground() {
       }
       renderer.draw(uniforms)
 
-      // The hero phone follows the same clock: screenshot switch and a flash when a packet lands.
-      if (heroPhoneEl) applyHeroPhone(heroPhoneEl, heroPhoneState(time))
+      // The hero phone follows the same clock: its frame flashes when a light lands in it.
+      if (heroPhoneEl) applyHeroPhone(heroPhoneEl, heroPhonePing(time))
     }
 
     const loop = (now: number) => {

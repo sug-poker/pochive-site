@@ -166,13 +166,10 @@ footer {
   min-height: 100vh;
   display: grid;
   grid-template-columns: 1fr auto;
-  grid-template-areas:
-    'content phone'
-    'table phone';
+  grid-template-areas: 'content phone';
   align-content: center;
   align-items: center;
   column-gap: 64px;
-  row-gap: 32px;
   max-width: 1100px;
   margin: 0 auto;
   padding: 120px 24px 80px;
@@ -238,53 +235,10 @@ footer {
   opacity: 0.85;
 }
 
-/* Area under the CTA where the shader draws the line-art poker table. */
-.hero-table {
-  grid-area: table;
-  position: relative;
-  width: 100%;
-  max-width: 560px;
-  aspect-ratio: 2.3 / 1;
-}
-
-.hero-seat {
-  position: absolute;
-  transform: translate(-50%, -50%);
-  font: 700 9px ui-monospace, Menlo, monospace;
-  letter-spacing: 1.5px;
-  color: var(--muted);
-  opacity: 0.8;
-}
-
-.hero-seat--me {
-  color: var(--gold);
-  opacity: 1;
-}
-
-.no-webgl .hero-seat {
-  display: none;
-}
-
-/* Hero phone: two real screenshots cross-faded by the shader clock (data-screen),
-   with a brief glow (is-ping) whenever a packet from the table lands. */
+/* Hero phone: its frame glows briefly (is-ping) whenever a light from the table outline lands in it. */
 .hero-phone {
   grid-area: phone;
-  position: relative;
   transition: box-shadow 0.5s;
-}
-
-.hero-shot {
-  transition: opacity 0.6s;
-}
-
-.hero-shot--bankroll {
-  position: absolute;
-  inset: 14px;
-}
-
-.hero-phone[data-screen='hands'] .hero-shot--bankroll,
-.hero-phone[data-screen='bankroll'] .hero-shot--hands {
-  opacity: 0;
 }
 
 .hero-phone.is-ping {
@@ -293,17 +247,15 @@ footer {
 }
 
 @media (max-width: 768px) {
-  /* Phone, then table, then copy, so the phone and the table share the first screen. */
   .hero {
     grid-template-columns: 1fr;
     grid-template-areas:
       'phone'
-      'table'
       'content';
     justify-items: center;
     text-align: center;
-    padding-top: 72px;
-    row-gap: 12px;
+    padding-top: 100px;
+    row-gap: 40px;
   }
 
   .hero-content {
@@ -330,17 +282,8 @@ footer {
     align-self: center;
   }
 
-  .hero-table {
-    max-width: 390px;
-  }
-
-  .hero-seat {
-    display: none;
-  }
-
-  /* Small enough that phone and table fit above Safari's toolbars (~660px visible). */
   .iphone-screen {
-    width: 180px;
+    width: 240px;
   }
 }
 
