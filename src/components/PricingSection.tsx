@@ -1,10 +1,10 @@
-import { COMPARISON_FEATURES, PLANS } from '@pochive/plans'
-import type { ComparisonFeature } from '@pochive/plans'
+import { COMPARISON_FEATURES, PLANS, localize } from '@pochive/plans'
+import type { ComparisonFeature, LocalizedText } from '@pochive/plans'
 
-function renderValue(val: boolean | string): string {
+function renderValue(val: boolean | LocalizedText): string {
   if (val === true) return '✓'
   if (val === false) return '—'
-  return val
+  return localize(val, 'ja')
 }
 
 function PlanCard({ tier, highlight }: { tier: 'free' | 'analyzer'; highlight?: boolean }) {
@@ -13,7 +13,7 @@ function PlanCard({ tier, highlight }: { tier: 'free' | 'analyzer'; highlight?: 
     <div className={`pricing-card${highlight ? ' pricing-card--highlight' : ''}`}>
       <div className="pricing-card-header">
         {highlight && <span className="badge">おすすめ</span>}
-        <h3>{plan.name}</h3>
+        <h3>{localize(plan.name, 'ja')}</h3>
       </div>
       {plan.price ? (
         <div className="pricing-card-price">
@@ -27,7 +27,7 @@ function PlanCard({ tier, highlight }: { tier: 'free' | 'analyzer'; highlight?: 
       )}
       <ul>
         {plan.features.map((f) => (
-          <li key={f.label}>{f.label}</li>
+          <li key={f.label.ja}>{localize(f.label, 'ja')}</li>
         ))}
       </ul>
     </div>
@@ -46,8 +46,8 @@ function ComparisonTable({ features }: { features: ComparisonFeature[] }) {
       </thead>
       <tbody>
         {features.map((f) => (
-          <tr key={f.label}>
-            <td>{f.label}</td>
+          <tr key={f.label.ja}>
+            <td>{localize(f.label, 'ja')}</td>
             <td>{renderValue(f.free)}</td>
             <td>{renderValue(f.analyzer)}</td>
           </tr>
