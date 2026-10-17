@@ -28,6 +28,10 @@ describe('buildFragmentSource', () => {
     expect(src).toContain('float sdTrack(')
     expect(src).not.toMatch(/BEAM_FROM|uCards|uTable|seatT|betPos/)
   })
+  it('turns the hero table outline upright on the stacked (portrait) layout', () => {
+    const hero = src.slice(src.indexOf('vec3 heroTrack('), src.indexOf('vec3 featureFx('))
+    expect(hero).toContain('uStacked')
+  })
   it('vertex shader passes the full-screen triangle through', () => {
     expect(VERTEX_SOURCE).toContain('gl_Position')
   })

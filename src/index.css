@@ -243,12 +243,13 @@ footer {
   .hero {
     grid-template-columns: 1fr;
     grid-template-areas:
-      'phone'
-      'content';
+      'content'
+      'phone';
     justify-items: center;
     text-align: center;
     padding-top: 100px;
-    row-gap: 40px;
+    /* room for the upright table outline that rises just above the phone */
+    row-gap: 72px;
   }
 
   .hero-content {
