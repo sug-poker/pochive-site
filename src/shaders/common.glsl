@@ -1,15 +1,7 @@
 // Shared uniforms and helpers. Coordinates are device pixels with y up (gl_FragCoord).
+// uRes is the size of whichever canvas is drawing: the fixed background or an effect layer.
 uniform vec2 uRes;
 uniform float uTime;
-uniform vec2 uLight;
-uniform float uHero;
-uniform vec3 uPhone;   // hero phone: centre (device px, y up) and height
-uniform float uStacked;
-uniform vec4 uF0;
-uniform vec4 uF1;
-uniform vec4 uF2;
-uniform vec4 uF3;
-uniform vec4 uFSide;
 
 const vec3 GOLD = vec3(.79,.66,.30);
 

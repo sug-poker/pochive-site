@@ -48,6 +48,20 @@ footer {
   z-index: 1;
 }
 
+/* Phone-anchored effects: positioned inside their section so they scroll with the page
+   (placed by ShaderBackground), behind the section's content. */
+.shader-layer {
+  position: absolute;
+  z-index: -1;
+  pointer-events: none;
+  display: block;
+}
+
+.no-webgl .shader-layer,
+.shader-layer[hidden] {
+  display: none;
+}
+
 /* ── Shared ── */
 
 .section-inner {
@@ -163,6 +177,7 @@ footer {
 /* ── Hero ── */
 
 .hero {
+  position: relative;
   min-height: 100vh;
   display: grid;
   grid-template-columns: 1fr auto;
@@ -300,6 +315,7 @@ footer {
 }
 
 .feature-row {
+  position: relative;
   display: flex;
   align-items: center;
   gap: 80px;

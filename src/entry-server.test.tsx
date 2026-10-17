@@ -16,6 +16,13 @@ describe('prerender output', () => {
     expect(hero).toContain('/screenshots/hands.png')
     expect(hero).not.toMatch(/hero-table|hero-seat/)
   })
+  it('renders one effect layer canvas for the hero and one per feature, hidden from assistive tech', () => {
+    const layers = html.match(/<canvas class="shader-layer"[^>]*>/g) ?? []
+    expect(layers).toHaveLength(5)
+    expect(layers.filter((c) => c.includes('data-shader-layer="hero"'))).toHaveLength(1)
+    expect(layers.filter((c) => c.includes('data-shader-layer="feature"'))).toHaveLength(4)
+    for (const c of layers) expect(c).toContain('aria-hidden="true"')
+  })
   it('adds the eyebrow labels and feature numbers', () => {
     for (const label of ['FEATURES', 'PRICING', 'CONTACT']) {
       expect(html).toContain(`<span class="eyebrow">${label}</span>`)

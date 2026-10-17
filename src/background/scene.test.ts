@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { canvasSize, featureAmount, frameDue, heroFade, lightTarget, renderSettings, textSide } from './scene'
+import { canvasSize, featureAmount, frameDue, heroFade, layerBox, lightTarget, renderSettings, textSide } from './scene'
 
 describe('heroFade', () => {
   it('is 1 while the hero still fills most of the viewport', () => {
@@ -76,14 +76,18 @@ describe('renderSettings', () => {
 
 describe('frameDue', () => {
   it('draws every animation frame at 60fps', () => {
-    expect(frameDue(1016.7, 1000, 60, false)).toBe(true)
+    expect(frameDue(1016.7, 1000, 60)).toBe(true)
   })
   it('skips every other 60Hz frame at 30fps, with a little slack for timer jitter', () => {
-    expect(frameDue(1016.7, 1000, 30, false)).toBe(false)
-    expect(frameDue(1032.5, 1000, 30, false)).toBe(true)
+    expect(frameDue(1016.7, 1000, 30)).toBe(false)
+    expect(frameDue(1032.5, 1000, 30)).toBe(true)
   })
-  it('draws every frame while the page is scrolling so effects keep up with their phones', () => {
-    expect(frameDue(1008.3, 1000, 30, true)).toBe(true)
+})
+
+describe('layerBox', () => {
+  it('spans the viewport width and 1.8 phone heights centred on the phone, in container coordinates', () => {
+    expect(layerBox({ left: 100, top: 2000 }, { left: 140, top: 2040, width: 248, height: 520 }, 1280))
+      .toEqual({ left: -100, top: -168, width: 1280, height: 936, phone: [264, 468, 520] })
   })
 })
 

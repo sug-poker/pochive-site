@@ -1,28 +1,13 @@
 import { VERTEX_SOURCE } from './shaderSource'
 
-export type Vec2 = [number, number]
-type Vec4 = [number, number, number, number]
-
-// Positions are device pixels with y up, matching gl_FragCoord.
-export type Uniforms = {
-  res: Vec2
-  time: number
-  light: Vec2
-  hero: number
-  phone: [number, number, number]
-  stacked: number
-  features: Vec4[]
-  featureSides: Vec4
-}
+export type UniformValue = number | readonly number[]
 
 export interface Renderer {
   resize(width: number, height: number): void
-  draw(u: Uniforms): void
+  // Sets each uniform by name (1 to 4 floats) and draws a full-screen pass.
+  draw(uniforms: Record<string, UniformValue>): void
   dispose(): void
 }
-
-const UNIFORM_NAMES = ['uRes', 'uTime', 'uLight', 'uHero', 'uPhone', 'uStacked', 'uF0', 'uF1', 'uF2', 'uF3', 'uFSide'] as const
-const NO_FEATURE: Vec4 = [0, 0, 1, 0]
 
 function compile(gl: WebGLRenderingContext, type: number, source: string): WebGLShader | null {
   const shader = gl.createShader(type)
@@ -37,8 +22,17 @@ function compile(gl: WebGLRenderingContext, type: number, source: string): WebGL
   return shader
 }
 
-export function createRenderer(canvas: HTMLCanvasElement, fragmentSource: string): Renderer | null {
-  const gl = canvas.getContext('webgl', { antialias: false })
+// transparent: a see-through canvas whose shader writes premultiplied colour (effect layers).
+export function createRenderer(
+  canvas: HTMLCanvasElement,
+  fragmentSource: string,
+  options: { transparent?: boolean } = {},
+): Renderer | null {
+  const gl = canvas.getContext('webgl', {
+    antialias: false,
+    alpha: !!options.transparent,
+    premultipliedAlpha: !!options.transparent,
+  })
   if (!gl) return null
 
   const vs = compile(gl, gl.VERTEX_SHADER, VERTEX_SOURCE)
@@ -65,10 +59,11 @@ export function createRenderer(canvas: HTMLCanvasElement, fragmentSource: string
   gl.enableVertexAttribArray(position)
   gl.vertexAttribPointer(position, 2, gl.FLOAT, false, 0, 0)
 
-  const loc = Object.fromEntries(UNIFORM_NAMES.map((n) => [n, gl.getUniformLocation(program, n)])) as Record<
-    (typeof UNIFORM_NAMES)[number],
-    WebGLUniformLocation | null
-  >
+  const locations = new Map<string, WebGLUniformLocation | null>()
+  const location = (name: string) => {
+    if (!locations.has(name)) locations.set(name, gl.getUniformLocation(program, name))
+    return locations.get(name) ?? null
+  }
 
   return {
     resize(width, height) {
@@ -76,18 +71,15 @@ export function createRenderer(canvas: HTMLCanvasElement, fragmentSource: string
       canvas.height = height
       gl.viewport(0, 0, width, height)
     },
-    draw(u) {
-      gl.uniform2f(loc.uRes, ...u.res)
-      gl.uniform1f(loc.uTime, u.time)
-      gl.uniform2f(loc.uLight, ...u.light)
-      gl.uniform1f(loc.uHero, u.hero)
-      gl.uniform3f(loc.uPhone, ...u.phone)
-      gl.uniform1f(loc.uStacked, u.stacked)
-      gl.uniform4f(loc.uF0, ...(u.features[0] ?? NO_FEATURE))
-      gl.uniform4f(loc.uF1, ...(u.features[1] ?? NO_FEATURE))
-      gl.uniform4f(loc.uF2, ...(u.features[2] ?? NO_FEATURE))
-      gl.uniform4f(loc.uF3, ...(u.features[3] ?? NO_FEATURE))
-      gl.uniform4f(loc.uFSide, ...u.featureSides)
+    draw(uniforms) {
+      for (const [name, value] of Object.entries(uniforms)) {
+        const loc = location(name)
+        const v = typeof value === 'number' ? [value] : value
+        if (v.length === 1) gl.uniform1f(loc, v[0])
+        else if (v.length === 2) gl.uniform2f(loc, v[0], v[1])
+        else if (v.length === 3) gl.uniform3f(loc, v[0], v[1], v[2])
+        else gl.uniform4f(loc, v[0], v[1], v[2], v[3])
+      }
       gl.drawArrays(gl.TRIANGLES, 0, 3)
     },
     dispose() {

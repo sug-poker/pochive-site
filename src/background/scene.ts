@@ -69,15 +69,37 @@ export function renderSettings(env: {
   }
 }
 
-// Whether to draw this animation frame. While the page scrolls every frame is drawn so the
-// effects anchored to phones keep pace with them; otherwise frames are spaced to maxFps.
+// Whether enough time has passed since the last drawn frame to draw again at maxFps.
 // A couple of milliseconds of slack keeps 30fps steady on 60Hz timers.
-export function frameDue(now: number, lastDrawn: number, maxFps: number, scrolling: boolean): boolean {
-  return scrolling || now - lastDrawn >= 1000 / maxFps - 2
+export function frameDue(now: number, lastDrawn: number, maxFps: number): boolean {
+  return now - lastDrawn >= 1000 / maxFps - 2
 }
 
 // Drawing-buffer size for a canvas whose CSS box is width x height. Measuring the canvas itself
 // (not the window) keeps it unstretched while iOS Safari's toolbars grow and shrink.
 export function canvasSize(width: number, height: number, ratio: number): [number, number] {
   return [Math.round(width * ratio), Math.round(height * ratio)]
+}
+
+// Height of an effect layer in phone heights; it spans the viewport width.
+export const LAYER_HEIGHT = 1.8
+
+// Where an effect layer canvas sits inside its (positioned) container, so it scrolls with the
+// page: full viewport width starting at the viewport's left edge, LAYER_HEIGHT phone heights tall
+// and centred on the phone. Also returns the phone inside the layer as (centre x, centre y from
+// the top, height). All values are CSS px; rects are viewport-relative, so their difference is
+// independent of the scroll position.
+export function layerBox(
+  container: { left: number; top: number },
+  phone: { left: number; top: number; width: number; height: number },
+  viewportWidth: number,
+): { left: number; top: number; width: number; height: number; phone: [number, number, number] } {
+  const height = phone.height * LAYER_HEIGHT
+  return {
+    left: -container.left,
+    top: phone.top + phone.height / 2 - container.top - height / 2,
+    width: viewportWidth,
+    height,
+    phone: [phone.left + phone.width / 2, height / 2, phone.height],
+  }
 }
