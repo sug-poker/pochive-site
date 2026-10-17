@@ -302,8 +302,8 @@ footer {
       'content';
     justify-items: center;
     text-align: center;
-    padding-top: 100px;
-    row-gap: 24px;
+    padding-top: 72px;
+    row-gap: 12px;
   }
 
   .hero-content {
@@ -338,8 +338,9 @@ footer {
     display: none;
   }
 
+  /* Small enough that phone and table fit above Safari's toolbars (~660px visible). */
   .iphone-screen {
-    width: 200px;
+    width: 180px;
   }
 }
 

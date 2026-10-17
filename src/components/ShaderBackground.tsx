@@ -12,6 +12,7 @@ import {
 } from '../background/scene'
 import { buildFragmentSource } from '../background/shaderSource'
 import { createRenderer, watchContextLoss, type Uniforms } from '../background/renderer'
+import { applyHeroPhone, resetHeroPhone } from '../background/heroPhone'
 
 const center = (r: DOMRect): Point => [r.left + r.width / 2, r.top + r.height / 2]
 
@@ -90,12 +91,7 @@ export default function ShaderBackground() {
       renderer.draw(uniforms)
 
       // The hero phone follows the same clock: screenshot switch and a flash when a packet lands.
-      // Only DOM attributes change, so the prerendered markup still hydrates as-is.
-      if (heroPhoneEl) {
-        const phone = heroPhoneState(time)
-        if (heroPhoneEl.dataset.screen !== phone.screen) heroPhoneEl.dataset.screen = phone.screen
-        heroPhoneEl.classList.toggle('is-ping', phone.ping)
-      }
+      if (heroPhoneEl) applyHeroPhone(heroPhoneEl, heroPhoneState(time))
     }
 
     const loop = (now: number) => {
@@ -128,6 +124,7 @@ export default function ShaderBackground() {
       lost = true
       stop()
       root.classList.add('no-webgl')
+      if (heroPhoneEl) resetHeroPhone(heroPhoneEl)
     })
 
     resize()
@@ -145,6 +142,7 @@ export default function ShaderBackground() {
       window.removeEventListener('scroll', drawStill)
       window.removeEventListener('mousemove', onMouseMove)
       document.removeEventListener('visibilitychange', onVisibility)
+      if (heroPhoneEl) resetHeroPhone(heroPhoneEl)
       renderer.dispose()
     }
   }, [])
