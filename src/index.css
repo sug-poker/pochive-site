@@ -164,17 +164,22 @@ footer {
 
 .hero {
   min-height: 100vh;
-  display: flex;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  grid-template-areas:
+    'content phone'
+    'table phone';
+  align-content: center;
   align-items: center;
-  justify-content: center;
-  gap: 64px;
+  column-gap: 64px;
+  row-gap: 32px;
   max-width: 1100px;
   margin: 0 auto;
   padding: 120px 24px 80px;
 }
 
 .hero-content {
-  flex: 1;
+  grid-area: content;
   display: flex;
   flex-direction: column;
   gap: 20px;
@@ -233,19 +238,72 @@ footer {
   opacity: 0.85;
 }
 
-/* Space under the CTA where the shader deals the hero cards. */
-.hero-cards {
-  align-self: stretch;
-  height: 120px;
+/* Area under the CTA where the shader draws the line-art poker table. */
+.hero-table {
+  grid-area: table;
+  position: relative;
+  width: 100%;
+  max-width: 560px;
+  aspect-ratio: 2.3 / 1;
+}
+
+.hero-seat {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  font: 700 9px ui-monospace, Menlo, monospace;
+  letter-spacing: 1.5px;
+  color: var(--muted);
+  opacity: 0.8;
+}
+
+.hero-seat--me {
+  color: var(--gold);
+  opacity: 1;
+}
+
+.no-webgl .hero-seat {
+  display: none;
+}
+
+/* Hero phone: two real screenshots cross-faded by the shader clock (data-screen),
+   with a brief glow (is-ping) whenever a packet from the table lands. */
+.hero-phone {
+  grid-area: phone;
+  position: relative;
+  transition: box-shadow 0.5s;
+}
+
+.hero-shot {
+  transition: opacity 0.6s;
+}
+
+.hero-shot--bankroll {
+  position: absolute;
+  inset: 14px;
+}
+
+.hero-phone[data-screen='hands'] .hero-shot--bankroll,
+.hero-phone[data-screen='bankroll'] .hero-shot--hands {
+  opacity: 0;
+}
+
+.hero-phone.is-ping {
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(201, 168, 76, 0.7), 0 0 50px rgba(201, 168, 76, 0.35);
+  transition: box-shadow 0.08s;
 }
 
 @media (max-width: 768px) {
+  /* Phone, then table, then copy, so the phone and the table share the first screen. */
   .hero {
-    flex-direction: column-reverse;
+    grid-template-columns: 1fr;
+    grid-template-areas:
+      'phone'
+      'table'
+      'content';
+    justify-items: center;
     text-align: center;
-    align-items: center;
     padding-top: 100px;
-    gap: 40px;
+    row-gap: 24px;
   }
 
   .hero-content {
@@ -272,12 +330,16 @@ footer {
     align-self: center;
   }
 
-  .hero-cards {
-    height: 90px;
+  .hero-table {
+    max-width: 390px;
+  }
+
+  .hero-seat {
+    display: none;
   }
 
   .iphone-screen {
-    width: 240px;
+    width: 200px;
   }
 }
 

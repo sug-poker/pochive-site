@@ -6,10 +6,16 @@ describe('prerender output', () => {
   it('renders the background canvas hidden from assistive tech', () => {
     expect(html).toMatch(/<canvas class="shader-bg" aria-hidden="true"/)
   })
-  it('marks the hero phone, the card scene and all four feature phones', () => {
+  it('marks the hero phone and all four feature phones', () => {
     expect(html.match(/data-shader-anchor="hero-phone"/g)).toHaveLength(1)
-    expect(html.match(/data-shader-anchor="hero-cards"/g)).toHaveLength(1)
     expect(html.match(/data-shader-anchor="feature"/g)).toHaveLength(4)
+  })
+  it('renders the hero table scene with six seat labels and both phone screenshots', () => {
+    expect(html.match(/data-shader-anchor="hero-table"/g)).toHaveLength(1)
+    for (const seat of ['BTN', 'SB', 'BB', 'UTG', 'HJ', 'CO']) expect(html).toContain(`>${seat}</span>`)
+    expect(html).toContain('/screenshots/hands.png')
+    expect(html).toContain('/screenshots/bankroll.png')
+    expect(html).toMatch(/data-shader-anchor="hero-phone"[^>]*data-screen="hands"|data-screen="hands"[^>]*data-shader-anchor="hero-phone"/)
   })
   it('adds the eyebrow labels and feature numbers', () => {
     for (const label of ['FEATURES', 'PRICING', 'CONTACT']) {
