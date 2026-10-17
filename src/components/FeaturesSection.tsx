@@ -36,6 +36,7 @@ export default function FeaturesSection() {
             key={f.title}
             className={`feature-row${i % 2 === 1 ? ' feature-row--reverse' : ''}`}
           >
+            <canvas className="shader-layer" data-shader-layer="feature" aria-hidden="true" />
             <div className="feature-row-phone">
               <div className="iphone-frame-md" data-shader-anchor="feature">
                 <img

@@ -1,4 +1,8 @@
-// Felt, spotlight and embossed suits for the whole page, with the hero and feature effects on top.
+// Fixed background: felt, spotlight and embossed suits for the whole page. The phone-anchored
+// effects are drawn by layers that scroll with the page (layer.frag.glsl).
+uniform vec2 uLight;
+uniform float uHero;
+
 void main(){
   vec2 uv = gl_FragCoord.xy/uRes; vec2 p = toP(gl_FragCoord.xy);
   vec2 lp = toP(uLight);
@@ -19,9 +23,6 @@ void main(){
   float glow = smoothstep(0.,.2,phase) * smoothstep(.55,.25,phase) * step(.88, h) * (1. - .7*uHero);
   col += GOLD * (smoothstep(.04,.0,abs(ds))*.9 + smoothstep(.03,-.03,ds)*.18 + exp(-max(ds,0.)*12.)*.12)
        * glow * (.35 + .9*light);
-  // hero: a hand is dealt, scanned and recorded into the app
-  if(uHero > .001) col += heroTrack(p, light) * uHero;
-  col += featureFx(p);
   col *= smoothstep(1.4,.2,length(uv-.5)*1.6);
   gl_FragColor = vec4(col,1.);
 }

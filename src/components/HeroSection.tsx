@@ -2,6 +2,7 @@ export default function HeroSection() {
   return (
     <section id="hero">
       <div className="hero">
+        <canvas className="shader-layer" data-shader-layer="hero" aria-hidden="true" />
         <div className="hero-content">
           <span className="badge">App Store で配信中</span>
           <h1 className="hero-logo">

@@ -88,20 +88,3 @@ vec3 fxRoute(vec2 q){
   float pins = exp(-length(q-vec2(.35,.2))*45.) + exp(-length(q-vec2(2.1,.2))*45.);
   return GOLD * (arc*.9 + plane*1.6 + pins*1.2);
 }
-
-vec3 featureFx(vec2 p){
-  vec3 c = vec3(0.);
-  bool stacked = uStacked > .5;
-  // stacked: shrink the dial so its ring hugs the phone instead of crossing the heading below
-  if(uF0.w > .001) c += fxSession(local(p,uF0,uFSide.x) * (stacked ? 1.38 : 1.)) * uF0.w;
-  if(uF1.w > .001) c += fxHand(local(p,uF1,uFSide.y)) * uF1.w;
-  if(uF2.w > .001){
-    vec2 q = local(p,uF2,uFSide.z);
-    c += fxBankroll(stacked ? fitBand(q, uF2, -.2, 2.4, -.05, -.15) : q) * uF2.w;
-  }
-  if(uF3.w > .001){
-    vec2 q = local(p,uF3,uFSide.w);
-    c += (fxGlobe(q) + fxRoute(stacked ? fitBand(q, uF3, .35, 2.1, .6, -.35) : q)) * uF3.w;
-  }
-  return c;
-}
